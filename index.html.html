@@ -3,1203 +3,3468 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>카드 소팅 리서치 툴</title>
+    <title>롯데홈쇼핑 "혜택" 매장 카드 분류하기</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
+        * { 
+            margin: 0; 
+            padding: 0; 
             box-sizing: border-box;
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', 'Apple SD Gothic Neo', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            background-attachment: fixed;
+            min-height: 100vh; 
+            line-height: 1.6;
         }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        
+        .container { 
+            width: 100%;
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 10px; 
+            min-height: 100vh;
+        }
+        
+        .card { 
+            background: white; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
             overflow: hidden;
         }
-
-        .header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 30px;
+        
+        .page { 
+            display: none; 
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .page.active { display: block; }
+        
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        .header { 
+            background: white; 
+            padding: 20px 30px; 
+            border-bottom: 1px solid #eee; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        
+        .logo { font-size: 24px; font-weight: bold; color: #333; }
+        
+        .nav-buttons { 
+            display: flex; 
+            gap: 10px; 
+        }
+        
+        .form-group { margin: 20px 0; }
+        .form-label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        .form-control { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #e1e5e9; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus { 
+            outline: none; 
+            border-color: #667eea; 
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .textarea { 
+            min-height: 120px; 
+            resize: vertical; 
+            font-family: inherit; 
+        }
+        
+        .btn { 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            text-decoration: none; 
+            display: inline-block; 
             text-align: center;
         }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 700;
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
         }
-
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
+        
+        .btn-primary:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
-
-        .mode-selector {
-            display: flex;
-            background: #f8f9fa;
-            border-bottom: 3px solid #e9ecef;
+        
+        .btn-secondary { 
+            background: #e9ecef; 
+            color: #495057; 
+            border: 1px solid #ced4da; 
         }
-
-        .mode-btn {
-            flex: 1;
-            padding: 25px;
-            text-align: center;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2em;
+        
+        .btn-secondary:hover { background: #dee2e6; border-color: #ced4da; }
+        
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-danger:hover { background: #c0392b; }
+        
+        .login-container { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 20px; 
+        }
+        
+        .login-box { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            width: 100%; 
+            max-width: 400px;
+        }
+        
+        .login-title { 
+            text-align: center; 
+            font-size: 20px; 
+            font-weight: bold; 
+            color: #333; 
+            margin-bottom: 10px; 
+            line-height: 1.3; 
+        }
+        
+        .login-subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        
+        .admin-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px; 
+            padding: 30px; 
+        }
+        
+        .admin-section { 
+            background: #f8f9fa; 
+            padding: 25px; 
+            border-radius: 12px; 
+            border: 1px solid #e9ecef;
+        }
+        
+        .admin-section h3 { color: #333; margin-bottom: 20px; font-size: 20px; }
+        
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px; 
+            margin: 20px 0; 
+        }
+        
+        .stat-card { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            text-align: center; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .stat-number { font-size: 24px; font-weight: bold; color: #667eea; }
+        .stat-label { font-size: 14px; color: #666; margin-top: 5px; }
+        
+        .sorting-header { 
+            background: white; 
+            padding: 20px 30px; 
+            border-bottom: 1px solid #eee; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+        }
+        
+        .participant-info h2 { color: #333; font-size: 20px; }
+        .participant-info p { color: #666; font-size: 14px; }
+        
+        .progress-section { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: flex-end; 
+            min-width: 200px; 
+        }
+        
+        .progress-container { width: 200px; }
+        
+        .progress-bar { 
+            width: 100%; 
+            height: 8px; 
+            background: #e9ecef; 
+            border-radius: 4px; 
+            overflow: hidden;
+        }
+        
+        .progress-fill { 
+            height: 100%; 
+            background: linear-gradient(90deg, #667eea, #764ba2); 
+            transition: width 0.3s ease; 
+        }
+        
+        .progress-text { text-align: center; font-size: 14px; color: #666; margin-top: 5px; }
+        
+        .sorting-workspace { 
+            display: grid; 
+            grid-template-columns: 320px 1fr;
+            gap: 30px; 
+            padding: 30px; 
+            min-height: calc(100vh - 200px); 
+        }
+        
+        /* 미분류 카드 영역 - 높이 증가 */
+        .card-pool { 
+            background: #fff9e6; 
+            border-radius: 12px; 
+            padding: 20px; 
+            border: 2px dashed #f0ad4e; 
+            transition: all 0.3s;
+        }
+        
+        .card-pool.drag-over { 
+            border-color: #f0ad4e; 
+            background: #fff3cd; 
+            transform: scale(1.02); 
+        }
+        
+        .card-pool h3 { 
+            color: #8a6d3b; 
+            margin-bottom: 15px; 
+            font-size: 18px; 
             font-weight: 600;
-            color: #6c757d;
-            transition: all 0.3s ease;
         }
-
-        .mode-btn.active {
-            background: white;
-            color: #4facfe;
-            border-bottom: 3px solid #4facfe;
-            margin-bottom: -3px;
+        
+        /* 카드 목록 높이 증가 */
+        .card-list { 
+            max-height: 800px; 
+            overflow-y: auto; 
+            margin-bottom: 15px; 
         }
-
-        .mode-btn:hover:not(.active) {
-            background: #e9ecef;
-            color: #495057;
+        
+        .card-item { 
+            background: white; 
+            padding: 12px 15px; 
+            margin: 8px 0; 
+            border-radius: 8px; 
+            border: 1px solid #dee2e6; 
+            cursor: move; 
+            transition: all 0.2s; 
+            position: relative; 
+            user-select: none; 
+            font-size: 14px;
         }
-
-        .content {
-            padding: 30px;
-            min-height: 600px;
-        }
-
-        /* 연구자 모드 스타일 */
-        .researcher-mode {
-            display: none;
-        }
-
-        .researcher-mode.active {
-            display: block;
-        }
-
-        .setup-section {
-            margin-bottom: 40px;
-            padding: 25px;
-            border: 2px solid #e9ecef;
-            border-radius: 15px;
-            background: #f8f9fa;
-        }
-
-        .setup-section h3 {
-            color: #495057;
-            margin-bottom: 20px;
-            font-size: 1.4em;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            align-items: center;
-        }
-
-        .input-group input {
-            flex: 1;
-            padding: 12px 15px;
-            border: 2px solid #dee2e6;
-            border-radius: 8px;
-            font-size: 1em;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: #4facfe;
-            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
+        
+        .card-item:hover { 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
         }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-            color: white;
+        
+        .card-item.dragging { 
+            opacity: 0.5; 
+            transform: rotate(5deg); 
         }
-
-        .btn-success {
-            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
-            color: white;
+        
+        .card-item::after { 
+            content: "⋮⋮"; 
+            position: absolute; 
+            right: 10px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: #adb5bd; 
+            font-weight: bold; 
         }
-
-        .btn-large {
-            padding: 15px 30px;
-            font-size: 1.1em;
-            border-radius: 10px;
-        }
-
-        .items-list {
-            display: flex;
+        
+        .groups-area { background: white; }
+        
+        .groups-header { 
+            padding: 20px; 
+            border-bottom: 1px solid #eee; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
             flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .item-tag {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9em;
-        }
-
-        .item-tag .remove-btn {
-            background: rgba(255,255,255,0.3);
-            border: none;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .url-generator {
-            background: #e3f2fd;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
-        .url-display {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            border: 2px solid #2196f3;
-            font-family: monospace;
-            word-break: break-all;
-            margin: 10px 0;
-        }
-
-        /* 참여자 모드 스타일 */
-        .participant-mode {
-            display: none;
-        }
-
-        .participant-mode.active {
-            display: block;
-        }
-
-        .study-info {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .study-info h3 {
-            color: #495057;
-            margin-bottom: 15px;
-        }
-
-        .participant-input {
-            background: #e3f2fd;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-
-        .sorting-area {
-            display: grid;
-            grid-template-rows: auto 1fr;
-            gap: 30px;
-            height: 70vh;
-        }
-
-        .groups-container {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            border: 3px dashed #dee2e6;
-        }
-
-        .groups-title {
-            font-size: 1.3em;
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .groups-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
         }
-
-        .group-box {
-            background: white;
-            border: 2px solid #dee2e6;
-            border-radius: 12px;
-            padding: 15px;
-            min-height: 120px;
-            transition: all 0.3s ease;
+        
+        /* 그룹 순서 안내 텍스트 - 버튼 너비에 맞춤 */
+        .group-order-guide {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin: 0 20px 15px 20px;
+            font-size: 14px;
+            color: #1976d2;
+            text-align: center;
         }
-
-        .group-box.drag-over {
-            border-color: #4facfe;
-            background: #f0f8ff;
+        
+        .groups-container { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px; 
+            max-height: 70vh; 
+            overflow-y: auto; 
+            padding: 20px; 
+        }
+        
+        .group-container { 
+            background: #f8f9fa; 
+            border: 2px dashed #667eea; 
+            border-radius: 12px; 
+            padding: 15px; 
+            min-height: 200px; 
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .group-container.drag-over { 
+            border-color: #28a745; 
+            background: #f8fff8; 
+            transform: scale(1.02); 
+        }
+        
+        .group-drag-handle {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 24px;
+            height: 24px;
+            cursor: move;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            opacity: 0.7;
+            transition: all 0.2s;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+        
+        .group-container:hover .group-drag-handle {
+            opacity: 1;
+            background: rgba(102, 126, 234, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .group-container.dragging-group {
+            opacity: 0.7;
+            transform: rotate(2deg);
+            z-index: 1000;
+        }
+        
+        /* 그룹 메타 정보 - 색상 연하게 */
+        .group-meta-info {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+            z-index: 10;
+        }
+        
+        .group-rank {
+            background: rgba(102, 126, 234, 0.7);
+            color: white;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: normal;
+        }
+        
+        .group-card-count {
+            background: rgba(40, 167, 69, 0.7);
+            color: white;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: normal;
+        }
+        
+        .group-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 15px; 
+            padding-bottom: 10px; 
+            border-bottom: 1px solid #dee2e6; 
+            padding-top: 35px;
+            padding-right: 80px;
+        }
+        
+        /* 그룹명 폰트 크기 증가 */
+        .group-title { 
+            font-weight: 600; 
+            color: #333; 
+            flex: 1; 
+            font-size: 16px;
+        }
+        
+        .group-title.editable { 
+            cursor: pointer; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            transition: background 0.2s;
+        }
+        
+        .group-title.editable:hover { background: #e9ecef; }
+        
+        .group-actions { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        
+        .delete-group-btn { 
+            background: #e74c3c; 
+            color: white; 
+            border: none; 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 50%; 
+            cursor: pointer; 
+            font-size: 14px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+        
+        .group-content { min-height: 120px; }
+        .empty-group { text-align: center; color: #adb5bd; padding: 40px 20px; font-style: italic; }
+        .group-content .card-item { margin: 8px 0; }
+        
+        .sorting-actions { 
+            background: white; 
+            padding: 20px 30px; 
+            border-top: 1px solid #eee; 
+            display: flex; 
+            justify-content: center; 
+            gap: 25px; 
+            flex-wrap: wrap; 
+        }
+        
+        .completion-container { text-align: center; padding: 60px 30px; }
+        
+        .completion-message { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            padding: 40px; 
+            border-radius: 12px; 
+            margin-bottom: 40px;
+        }
+        
+        .completion-message h2 { font-size: 32px; margin-bottom: 15px; }
+        
+        .completion-stats { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px; 
+            margin: 30px 0; 
+        }
+        
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-2 { margin-top: 10px; }
+        .mt-3 { margin-top: 15px; }
+        .mb-2 { margin-bottom: 10px; }
+        .mb-3 { margin-bottom: 15px; }
+        .flex { display: flex !important; }
+        .flex-wrap { flex-wrap: wrap; }
+        .gap-2 { gap: 10px; }
+        .gap-3 { gap: 15px; }
+        .justify-center { justify-content: center; }
+        .items-center { align-items: center; }
+        .w-full { width: 100%; }
+        
+        .alert { 
+            padding: 12px 16px; 
+            border-radius: 8px; 
+            margin: 15px 0; 
+            border-left: 4px solid;
+        }
+        
+        .alert-info { background: #e3f2fd; border-color: #2196f3; color: #1976d2; }
+        .alert-warning { background: #fff3e0; border-color: #ff9800; color: #f57c00; }
+        .alert-success { background: #e8f5e9; border-color: #4caf50; color: #388e3c; }
+        
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 1000; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .modal.show { display: flex; }
+        
+        .modal-content { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            max-width: 700px; 
+            width: 90%; 
+            max-height: 80vh; 
+            overflow-y: auto;
+        }
+        
+        /* 새로 추가된 스타일 */
+        .welcome-container { text-align: center; padding: 60px 30px; }
+        .welcome-message { background: white; padding: 40px; border-radius: 12px; margin-bottom: 30px; line-height: 1.8; }
+        
+        /* 설문 페이지 스타일 - 수정됨 */
+        .survey-container { padding: 30px; }
+        .survey-header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            position: relative; 
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+        .survey-header h2 { 
+            color: #333; 
+            font-size: 24px; 
+            margin-bottom: 15px; 
+            line-height: 1.5;
+        }
+        
+        /* 안내문 수정 */
+        .survey-header p { 
+            color: #666; 
+            font-size: 16px; 
+            margin-top: 10px; 
+            line-height: 1.6;
+        }
+        
+        /* 3열 드래그 앤 드롭 레이아웃 - 높이 증가 */
+        .survey-drag-layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            min-height: 600px;
+            margin-bottom: 30px;
+        }
+        
+        .survey-drop-zone {
+            background: white;
+            border: 3px dashed #dee2e6;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 500px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .survey-drop-zone.drag-over {
+            border-color: #667eea;
+            background: #f8f9ff;
             transform: scale(1.02);
         }
-
-        .group-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .group-name {
-            font-weight: 600;
-            color: #495057;
-            font-size: 1.1em;
-        }
-
-        .group-name.editable {
-            background: none;
-            border: none;
-            outline: none;
-            border-bottom: 2px solid #4facfe;
-            padding: 2px 5px;
-        }
-
-        .add-group-btn {
-            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
-            color: white;
-            border: none;
+        
+        .drop-zone-header {
+            text-align: center;
             padding: 15px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1.1em;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .add-group-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .group-cards {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .cards-container {
-            background: #fff3cd;
-            padding: 25px;
-            border-radius: 15px;
-            border: 3px dashed #ffc107;
-        }
-
-        .cards-title {
-            font-size: 1.3em;
-            font-weight: 600;
-            color: #856404;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-        }
-
-        .card-item {
-            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            cursor: grab;
-            user-select: none;
-            text-align: center;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .card-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-        }
-
-        .card-item:active {
-            cursor: grabbing;
-        }
-
-        .card-item.dragging {
-            opacity: 0.5;
-            transform: rotate(5deg);
-        }
-
-        .card-item.in-group {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            font-size: 0.9em;
-            padding: 8px 12px;
-        }
-
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .progress-bar {
-            background: #e9ecef;
-            height: 8px;
-            border-radius: 4px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
-            height: 100%;
-            transition: width 0.3s ease;
-        }
-
-        .completion-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .completion-modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 500px;
-            margin: 20px;
-        }
-
-        .modal-content h3 {
-            color: #28a745;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-        }
-
-        .result-summary {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #28a745;
-            color: white;
-            padding: 15px 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            z-index: 1000;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 16px;
         }
-
-        .toast.show {
-            transform: translateX(0);
+        
+        .drop-zone-left .drop-zone-header {
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 2px solid #2196f3;
         }
-
-        .toast.error {
-            background: #dc3545;
+        
+        .drop-zone-right .drop-zone-header {
+            background: #ffebee;
+            color: #d32f2f;
+            border: 2px solid #f44336;
         }
-
-        /* 반응형 디자인 */
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                border-radius: 15px;
-            }
-
-            .header {
-                padding: 20px;
-            }
-
-            .header h1 {
-                font-size: 2em;
-            }
-
-            .mode-btn {
-                padding: 15px 10px;
-                font-size: 1em;
-            }
-
-            .content {
-                padding: 20px;
-            }
-
-            .sorting-area {
-                height: auto;
-            }
-
-            .groups-grid {
+        
+        .drop-zone-content {
+            min-height: 400px;
+            position: relative;
+        }
+        
+        .drop-zone-empty {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #adb5bd;
+            font-style: italic;
+            text-align: center;
+            pointer-events: none;
+        }
+        
+        .survey-dropped-card {
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: move;
+            position: relative;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .survey-dropped-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .survey-dropped-card.dragging {
+            opacity: 0.5;
+            transform: rotate(3deg);
+        }
+        
+        .survey-dropped-card.q1 {
+            border-color: #2196f3;
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .survey-dropped-card.q2 {
+            border-color: #f44336;
+            background: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .survey-card-rank {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .survey-card-rank.q1 {
+            border-color: #2196f3;
+            color: #2196f3;
+        }
+        
+        .survey-card-rank.q2 {
+            border-color: #f44336;
+            color: #f44336;
+        }
+        
+        /* 가운데 카드 영역 - 그룹 박스 모양으로 수정 */
+        .survey-cards-center {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .survey-center-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .survey-center-header h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .survey-center-header p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        /* 그룹 박스들을 3개씩 한 행에 배치 */
+        .survey-groups-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .survey-group-box {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 120px;
+            transition: all 0.3s;
+        }
+        
+        .survey-group-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .survey-group-box-header {
+            background: #667eea;
+            color: white;
+            padding: 8px 12px;
+            margin: -15px -15px 15px -15px;
+            border-radius: 6px 6px 0 0;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .survey-group-toggle {
+            font-size: 16px;
+            transition: transform 0.3s;
+        }
+        
+        .survey-group-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+        
+        .survey-group-cards {
+            display: block;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .survey-group-cards.collapsed {
+            display: none;
+        }
+        
+        .survey-draggable-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            cursor: move;
+            position: relative;
+            transition: all 0.2s;
+            font-size: 13px;
+            user-select: none;
+        }
+        
+        .survey-draggable-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: white;
+        }
+        
+        .survey-draggable-card.dragging {
+            opacity: 0.5;
+            transform: rotate(3deg);
+        }
+        
+        .survey-draggable-card.selected {
+            border-color: #667eea;
+            background: #f8f9ff;
+            opacity: 0.7;
+        }
+        
+        .survey-draggable-card::after {
+            content: "⋮⋮";
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #adb5bd;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .checkbox-group { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            margin: 15px 0; 
+        }
+        
+        .checkbox-group input[type="checkbox"] { margin: 0; }
+        
+        /* 의견 수집 페이지 스타일 */
+        .feedback-container { 
+            padding: 30px; 
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+        
+        .feedback-header { 
+            grid-column: 1 / -1;
+            text-align: center; 
+            margin-bottom: 30px; 
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .feedback-header h2 { 
+            color: #333; 
+            font-size: 24px; 
+            margin-bottom: 15px; 
+        }
+        
+        .feedback-left, .feedback-right {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .feedback-left h3, .feedback-right h3 {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .sorting-result-display {
+            max-height: 380px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex: 1;
+        }
+        
+        .result-group {
+            background: white;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #dee2e6;
+        }
+        
+        .result-group-header {
+            background: #667eea;
+            color: white;
+            padding: 10px 15px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .result-group-cards {
+            padding: 10px 15px;
+        }
+        
+        .result-card {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            margin: 4px 0;
+            border-radius: 6px;
+            font-size: 13px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .feedback-right .form-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        
+        .feedback-textarea { 
+            min-height: 300px; 
+            resize: vertical; 
+            font-family: inherit;
+            line-height: 1.6;
+            font-size: 14px;
+            flex: 1;
+        }
+        
+        .feedback-textarea::placeholder {
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+        
+        .char-counter { 
+            text-align: right; 
+            font-size: 14px; 
+            color: #666; 
+            margin-top: 5px; 
+        }
+        .char-counter.warning { color: #f57c00; }
+        .char-counter.danger { color: #e74c3c; }
+        
+        .feedback-actions {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        /* 모바일 반응형 */
+        @media (max-width: 768px) { 
+            .sorting-workspace { 
+                grid-template-columns: 1fr; 
+                gap: 20px; 
+                padding: 20px; 
+            } 
+            
+            .admin-grid { 
                 grid-template-columns: 1fr;
+                padding: 20px; 
+            } 
+            
+            .groups-container { 
+                grid-template-columns: 1fr;
+            } 
+            
+            .groups-header { 
+                flex-direction: column; 
+                gap: 10px; 
+            } 
+            
+            .sorting-header { 
+                flex-direction: column; 
+                text-align: center; 
+            } 
+            
+            .nav-buttons { 
+                flex-direction: column; 
+                width: 100%; 
             }
-
-            .cards-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            
+            .feedback-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
             }
-
-            .action-buttons {
-                flex-direction: column;
-                align-items: center;
+            
+            .modal-content {
+                max-width: 95%;
+                padding: 20px;
             }
+            
+            .survey-drag-layout {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .survey-groups-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+        
+        /* 알림 스타일 */
+        .notification {
+            position: fixed;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            max-width: 500px;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            font-weight: 600;
+            font-size: 16px;
+            animation: slideInDown 0.3s ease-out;
+            border: 2px solid;
+        }
+        
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateX(-50%) translateY(-30px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🧩 카드 소팅 리서치 툴</h1>
-            <p>연구자와 참여자 모두를 위한 전문 카드 소팅 도구</p>
+        <!-- 참여자 환영 페이지 -->
+        <div id="welcome-page" class="page">
+            <div class="welcome-container">
+                <div class="welcome-message">
+                    <h1 style="color: #333; margin-bottom: 30px;">안녕하세요!😄</h1>
+                    <p style="margin-bottom: 20px;">롯데홈쇼핑 온라인 리서치에 참여해주셔서 감사합니다.</p>
+                    <p style="margin-bottom: 20px;">본 리서치는 고객님께 보다 쉽고 편리하게 혜택 정보를 제공하기 위해 롯데홈쇼핑 이용 경험을 바탕으로 진행됩니다.</p>
+                    <p style="margin-bottom: 20px;">혜택 내용을 카드 형태로 보여드리면, 고객님께서 관련 있는 혜택끼리 직접 분류해보는 참여형 리서치입니다.</p>
+                    <p style="margin-bottom: 20px;">리서치는 약 10분 내외의 시간이 소요됩니다.</p>
+                    <p style="margin-bottom: 20px;">하단의 '리서치 참여하기' 버튼을 누르신 후 기본 정보를 입력하시면, 리서치 참여가 가능합니다.</p>
+                    <p style="font-weight: 600;">카드 분류를 완료하신 후에는 "응답 제출하기" 버튼을 꼭 눌러주시길 바랍니다.</p>
+                </div>
+                <button class="btn btn-primary" style="font-size: 18px; padding: 15px 30px;" onclick="showParticipantLogin()">
+                    리서치 참여하기
+                </button>
+            </div>
         </div>
 
-        <div class="mode-selector">
-            <button class="mode-btn active" onclick="switchMode('researcher')">👨‍🔬 연구자 모드</button>
-            <button class="mode-btn" onclick="switchMode('participant')">👥 참여자 모드</button>
-        </div>
-
-        <!-- 연구자 모드 -->
-        <div id="researcher-mode" class="content researcher-mode active">
-            <div class="setup-section">
-                <h3>📋 연구 기본 정보</h3>
-                <div class="input-group">
-                    <input type="text" id="study-title" placeholder="연구 제목을 입력하세요" value="쇼핑몰 카테고리 구조 최적화 연구">
-                </div>
-                <div class="input-group">
-                    <input type="text" id="study-description" placeholder="연구 설명을 입력하세요" value="사용자가 인식하는 상품 카테고리 분류 방식을 알아보는 연구입니다.">
-                </div>
-            </div>
-
-            <div class="setup-section">
-                <h3>🎴 카드 설정 (최대 100개)</h3>
-                <div class="input-group">
-                    <input type="text" id="card-input" placeholder="카드 내용을 입력하세요" maxlength="50">
-                    <button class="btn btn-primary" onclick="addCard()">카드 추가</button>
-                </div>
-                <div class="items-list" id="cards-list"></div>
-            </div>
-
-            <div class="setup-section">
-                <h3>📁 기본 그룹 설정 (최대 30개) - 선택사항</h3>
-                <p style="color: #6c757d; margin-bottom: 15px;">오픈 카드소팅의 경우 비워두세요. 참여자가 직접 그룹을 만들 수 있습니다.</p>
-                <div class="input-group">
-                    <input type="text" id="group-input" placeholder="그룹명을 입력하세요" maxlength="30">
-                    <button class="btn btn-primary" onclick="addGroup()">그룹 추가</button>
-                </div>
-                <div class="items-list" id="groups-list"></div>
-            </div>
-
-            <div class="setup-section">
-                <h3>🌐 배포 URL 설정</h3>
-                <p style="color: #6c757d; margin-bottom: 15px;">Netlify 배포 후 실제 도메인을 입력하세요 (예: https://my-card-sorting.netlify.app)</p>
-                <div class="input-group">
-                    <input type="text" id="base-url" placeholder="https://your-site.netlify.app" value="https://your-site.netlify.app">
-                    <button class="btn btn-primary" onclick="updateBaseURL()">URL 저장</button>
-                </div>
-            </div>
-
-            <div class="action-buttons">
-                <button class="btn btn-success btn-large" onclick="generateStudyURL()">🔗 참여자 URL 생성</button>
-                <button class="btn btn-primary btn-large" onclick="downloadHTMLFile()">💾 HTML 파일 다운로드</button>
-                <button class="btn btn-danger btn-large" onclick="resetAll()">🔄 전체 초기화</button>
-            </div>
-
-            <div class="url-generator" id="url-generator" style="display: none;">
-                <h4>📤 참여자 공유 URL</h4>
-                <p>아래 URL을 참여자들에게 공유하세요:</p>
-                <div class="url-display" id="study-url"></div>
-                <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="copyURL()">📋 URL 복사</button>
-                    <button class="btn btn-success" onclick="testParticipantMode()">👤 참여자 화면 테스트</button>
+        <!-- 관리자 로그인 -->
+        <div id="admin-login-page" class="page">
+            <div class="login-container">
+                <div class="login-box">
+                    <h1 class="login-title">관리자 로그인</h1>
+                    <p class="login-subtitle">관리자 전용 페이지입니다</p>
+                    
+                    <form onsubmit="adminLogin(event)">
+                        <div class="form-group">
+                            <label class="form-label">관리자 비밀번호</label>
+                            <input 
+                                type="password" 
+                                id="admin-password" 
+                                class="form-control" 
+                                placeholder="비밀번호를 입력하세요"
+                                required
+                            >
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-full">
+                            로그인
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
 
-        <!-- 참여자 모드 -->
-        <div id="participant-mode" class="content participant-mode">
-            <div class="study-info">
-                <h3 id="display-study-title">카드 소팅 연구에 참여해주셔서 감사합니다</h3>
-                <p id="display-study-description">아래 설명을 읽고 카드를 분류해주세요.</p>
-            </div>
-
-            <div class="participant-input">
-                <h4>👤 참여자 정보</h4>
-                <div class="input-group">
-                    <input type="text" id="participant-name" placeholder="이름 또는 참여자 ID를 입력하세요">
-                    <button class="btn btn-primary" onclick="startSorting()">시작하기</button>
-                </div>
-            </div>
-
-            <div id="sorting-interface" style="display: none;">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
-                </div>
-                <p style="text-align: center; margin-bottom: 20px;">
-                    진행률: <span id="progress-text">0%</span> 
-                    (<span id="assigned-count">0</span>/<span id="total-count">0</span> 카드 분류 완료)
-                </p>
-
-                <div class="sorting-area">
-                    <div class="groups-container">
-                        <div class="groups-title">📁 그룹 영역 (카드를 여기로 드래그하세요)</div>
-                        <div class="groups-grid" id="groups-grid"></div>
-                    </div>
-
-                    <div class="cards-container">
-                        <div class="cards-title">🎴 카드 목록</div>
-                        <div class="cards-grid" id="cards-grid"></div>
+        <!-- 관리자 대시보드 -->
+        <div id="admin-dashboard-page" class="page">
+            <div class="card">
+                <div class="header">
+                    <div class="logo">카드소팅 관리자 (Google Sheets 연동)</div>
+                    <div class="nav-buttons">
+                        <button class="btn btn-danger" onclick="adminLogout()">로그아웃</button>
                     </div>
                 </div>
 
-                <div class="action-buttons">
-                    <button class="btn btn-success btn-large" onclick="submitSorting()">✅ 분류 완료</button>
-                    <button class="btn btn-danger btn-large" onclick="resetSorting()">🔄 다시 시작</button>
+                <div class="admin-grid">
+                    <div class="admin-section">
+                        <h3>🎯 프로젝트 설정</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">프로젝트 제목</label>
+                            <input 
+                                type="text" 
+                                id="project-title" 
+                                class="form-control" 
+                                value="혜택 콘텐츠 카드소팅"
+                                placeholder="프로젝트 제목을 입력하세요"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">소팅 방식</label>
+                            <select id="sorting-type" class="form-control">
+                                <option value="open">오픈 소팅 (그룹 자유 생성)</option>
+                                <option value="closed">클로즈드 소팅 (고정 그룹만)</option>
+                                <option value="hybrid" selected>하이브리드 소팅 (기본 + 사용자 생성)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="predefined-groups-section">
+                            <label class="form-label">기본 그룹 (클로즈드/하이브리드 전용)</label>
+                            <textarea 
+                                id="predefined-groups" 
+                                class="form-control textarea" 
+                                placeholder="한 줄에 하나씩 입력하세요"
+                            >구매혜택
+참여혜택
+카드/결제혜택</textarea>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="shuffle-cards" checked>
+                            <label for="shuffle-cards">카드 순서 무작위 섞기</label>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="allow-edit-groups" checked>
+                            <label for="allow-edit-groups">기본 그룹명 수정 허용</label>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <h3>🃏 카드 목록 관리</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">카드 목록 (최대 100개)</label>
+                            <textarea 
+                                id="card-list" 
+                                class="form-control textarea" 
+                                placeholder="한 줄에 하나씩 입력하세요"
+                                style="min-height: 200px;"
+                            >방송 알림 신청하고 적립금 받기
+멤버십 가입하고 할인 쿠폰 받기
+방송 채팅 남기고 적립금 받기
+친구 추천하고 포인트 받기
+첫 구매 후 캐시백 받기
+리뷰 작성하고 적립금 받기
+생일 쿠폰 받기
+등급별 할인 혜택
+무료배송 혜택
+적립금 혜택</textarea>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <input 
+                                type="text" 
+                                id="new-card" 
+                                class="form-control" 
+                                placeholder="새 카드 추가"
+                                style="flex: 1;"
+                            >
+                            <button class="btn btn-secondary" onclick="addNewCard()">추가</button>
+                        </div>
+
+                        <div class="alert alert-info mt-2">
+                            <strong>현재 카드 수:</strong> <span id="card-count">10</span>개
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <h3>🔗 Google Sheets 설정</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">웹앱 URL</label>
+                            <input 
+                                type="text" 
+                                id="webapp-url" 
+                                class="form-control" 
+                                placeholder="Google Apps Script 웹앱 URL을 입력하세요"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">스프레드시트 ID</label>
+                            <input 
+                                type="text" 
+                                id="spreadsheet-id" 
+                                class="form-control" 
+                                placeholder="스프레드시트 ID를 입력하세요"
+                            >
+                        </div>
+
+                        <button class="btn btn-primary w-full mb-3" onclick="testConnection()">
+                            🔗 연결 테스트
+                        </button>
+
+                        <div id="connection-status" class="alert alert-info">
+                            <strong>연결 상태:</strong> 테스트를 실행해주세요
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <h3>🔗 응답자 URL 생성</h3>
+                        
+                        <button class="btn btn-primary w-full mb-3" onclick="generateURL()">
+                            프로젝트 저장 및 URL 생성
+                        </button>
+
+                        <div id="generated-url-section" class="hidden">
+                            <div class="form-group">
+                                <label class="form-label">생성된 응답자 URL</label>
+                                <div style="position: relative;">
+                                    <input 
+                                        type="text" 
+                                        id="generated-url" 
+                                        class="form-control" 
+                                        readonly
+                                        style="padding-right: 60px;"
+                                    >
+                                    <button 
+                                        class="btn btn-secondary" 
+                                        onclick="copyURL()"
+                                        style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); padding: 5px 10px; font-size: 12px;"
+                                    >
+                                        복사
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-2 mt-2">
+                                <button class="btn btn-secondary" onclick="openParticipantURL()">👤 응답자 페이지</button>
+                                <button class="btn btn-secondary" onclick="openGoogleSheets()">📊 Google Sheets 열기</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <h3>📊 응답 현황</h3>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-number" id="total-responses">0</div>
+                                <div class="stat-label">총 응답 수</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="completed-responses">0</div>
+                                <div class="stat-label">완료된 응답</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="ongoing-responses">0</div>
+                                <div class="stat-label">진행 중</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="avg-duration">0분</div>
+                                <div class="stat-label">평균 소요시간</div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 mt-3">
+                            <button class="btn btn-primary" onclick="downloadAllResponses()" style="flex: 1;">
+                                📥 JSON 다운로드
+                            </button>
+                            <button class="btn btn-secondary" onclick="openGoogleSheets()">
+                                📊 Google Sheets
+                            </button>
+                            <button class="btn btn-secondary" onclick="clearAllData()">
+                                🗑️ 초기화
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 응답자 로그인 -->
+        <div id="participant-login-page" class="page">
+            <div class="login-container">
+                <div class="login-box">
+                    <h1 class="login-title" id="participant-project-title">참여자 정보를 입력해주세요</h1>
+                    
+                    <form onsubmit="participantLogin(event)">
+                        <div class="form-group">
+                            <label class="form-label">이름</label>
+                            <input 
+                                type="text" 
+                                id="participant-name" 
+                                class="form-control" 
+                                placeholder="홍길동"
+                                pattern="[가-힣]+"
+                                title="한글만 입력해주세요"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">휴대폰 뒷번호 4자리</label>
+                            <input 
+                                type="text" 
+                                id="participant-phone" 
+                                class="form-control" 
+                                placeholder="1234"
+                                pattern="[0-9]{4}"
+                                maxlength="4"
+                                title="숫자 4자리만 입력해주세요"
+                                required
+                            >
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-full">
+                            시작하기
+                        </button>
+                    </form>
+
+                    <div id="existing-response-notice" class="alert alert-warning mt-3 hidden">
+                        <strong>⚠️ 기존 응답 발견</strong><br>
+                        이전에 진행하던 응답이 있습니다. 이어서 진행하시겠습니까?
+                        <div class="flex gap-2 mt-2">
+                            <button class="btn btn-secondary" onclick="continueExisting()">이어서 하기</button>
+                            <button class="btn btn-danger" onclick="startNew()">새로 시작</button>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success mt-3">
+                        <strong>📋 참여 안내:</strong><br>
+                        • 예상 소요시간: 약 10분<br>
+                        • 이어지는 화면에서 '카드 분류하기 안내서'가 제공됩니다<br>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <button class="btn btn-secondary" onclick="showWelcomePage()">
+                            ← 돌아가기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 카드소팅 메인 화면 -->
+        <div id="sorting-page" class="page">
+            <div class="card">
+                <div class="sorting-header">
+                    <div class="participant-info">
+                        <h2 id="sorting-participant-name">참여자님의 카드소팅</h2>
+                        <p id="sorting-type-info">하이브리드 소팅 진행 중</p>
+                    </div>
+                    <div class="progress-section">
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <div class="progress-text" id="progress-text">
+                                진행 상황을 확인하세요
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sorting-workspace">
+                    <div class="card-pool">
+                        <h3>🃏 미분류 카드 (<span id="unassigned-count">0</span>개)</h3>
+                        <div class="card-list" id="card-pool"></div>
+                    </div>
+
+                    <div class="groups-area">
+                        <div class="groups-header">
+                            <button 
+                                class="btn btn-secondary" 
+                                onclick="showSortingGuide()"
+                            >
+                                📖 카드 분류하기 안내서
+                            </button>
+                            <button 
+                                class="btn btn-secondary" 
+                                id="create-group-btn" 
+                                onclick="createNewGroup()"
+                            >
+                                ➕ 새 그룹 만들기
+                            </button>
+                        </div>
+                        
+                        <div class="group-order-guide">
+                            💡 중요하다고 생각하시는 그룹순으로 배열해보세요! 그룹 제목을 드래그해서 순서를 변경할 수 있어요.
+                        </div>
+                        
+                        <div class="groups-container" id="groups-container"></div>
+                    </div>
+                </div>
+
+                <div class="sorting-actions">
+                    <button class="btn btn-secondary" onclick="returnToLogin()">
+                        ← 로그인으로
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetAllCards()">
+                        🔄 전체 초기화
+                    </button>
+                    <button class="btn btn-secondary" onclick="autoSave()">
+                        💾 임시 저장
+                    </button>
+                    <button class="btn btn-primary" onclick="submitSorting()" id="submit-btn">
+                        ✅ 응답 제출하기
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 설문 응답하기 페이지 -->
+        <div id="survey-page" class="page">
+            <div class="card">
+                <div class="survey-container">
+                    <div class="survey-header">
+                        <h2>지금까지 분류해주신 카드 중 '가장 많이 사용하는 혜택'과 '가장 적게 사용하는 혜택'을 각각 3개씩 분류해주세요.</h2>
+                        <p>아래 카드들을 좌우로 드래그해서 선택해주세요.</p>
+                    </div>
+
+                    <!-- 3열 드래그 앤 드롭 레이아웃 -->
+                    <div class="survey-drag-layout">
+                        <!-- 좌측: 가장 많이 사용 -->
+                        <div class="survey-drop-zone drop-zone-left" id="q1-drop-zone">
+                            <div class="drop-zone-header">
+                                🔵 가장 많이 사용하는 혜택<br>
+                                <span id="q1-progress-display">0/3개</span>
+                            </div>
+                            <div class="drop-zone-content" id="q1-cards">
+                                <div class="drop-zone-empty">카드를 여기에 드래그하세요</div>
+                            </div>
+                        </div>
+
+                        <!-- 가운데: 분류된 카드들 -->
+                        <div class="survey-cards-center">
+                            <div class="survey-center-header">
+                                <h3>분류하신 카드들</h3>
+                                <p>카드를 좌우로 드래그해서 선택해주세요</p>
+                            </div>
+                            <div id="survey-center-groups" class="survey-groups-grid">
+                                <!-- 그룹별 카드들이 여기에 표시됩니다 -->
+                            </div>
+                        </div>
+
+                        <!-- 우측: 가장 적게 사용 -->
+                        <div class="survey-drop-zone drop-zone-right" id="q2-drop-zone">
+                            <div class="drop-zone-header">
+                                🔴 가장 적게 사용하는 혜택<br>
+                                <span id="q2-progress-display">0/3개</span>
+                            </div>
+                            <div class="drop-zone-content" id="q2-cards">
+                                <div class="drop-zone-empty">카드를 여기에 드래그하세요</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-3" style="border-top: 1px solid #eee; padding-top: 20px;">
+                        <div class="flex gap-3 justify-center">
+                            <button class="btn btn-secondary" onclick="returnToSorting()">
+                                ← 카드 분류로 돌아가기
+                            </button>
+                            <button class="btn btn-primary" onclick="submitSurvey()" id="survey-submit-btn">
+                                응답 제출하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 의견 수집 페이지 -->
+        <div id="feedback-page" class="page">
+            <div class="card">
+                <div class="feedback-container">
+                    <div class="feedback-header">
+                        <h2>수고 많으셨어요! 여러분의 참여는 큰 도움이 될 거에요.</h2>
+                        <p style="color: #666; font-size: 16px; margin-top: 10px;">마지막으로 지금까지 '카드 분류하기'를 진행하면서 느낀 점을 자유롭게 들려주세요!</p>
+                    </div>
+
+                    <div class="feedback-left">
+                        <h3>이렇게 응답하셨어요!</h3>
+                        <div class="sorting-result-display" id="sorting-result-display">
+                            <!-- 참여자의 그루핑 결과가 여기에 표시됩니다 -->
+                        </div>
+                    </div>
+
+                    <div class="feedback-right">
+                        <h3>어떤 의견이든 도움이 될거에요!</h3>
+                        <div class="form-group">
+                            <textarea 
+                                id="participant-feedback" 
+                                class="form-control feedback-textarea" 
+                                placeholder="&#10;무엇을 작성해야할지 모르겠다면 다음 내용들을 참고해주셔도 좋아요 : D&#10;-'카드 분류하기'라는 과정을 참여하면서 느낀 점!&#10;-카드를 분류할 때, 중요하게 신경썼던 점 혹은 어려웠던 점!&#10;-카드의 그룹명을 수정하거나 추가하셨다면, 그 이유!"
+                                maxlength="2000"
+                                oninput="updateCharCount()"
+                            ></textarea>
+                            <div class="char-counter" id="char-counter">0 / 2000자</div>
+                        </div>
+                    </div>
+
+                    <div class="feedback-actions">
+                        <div class="flex gap-3 justify-center">
+                            <button class="btn btn-secondary" onclick="returnToSurvey()">
+                                ← 설문으로 돌아가기
+                            </button>
+                            <button class="btn btn-primary" onclick="submitFeedback()">
+                                완료하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 완료 화면 -->
+        <div id="completion-page" class="page">
+            <div class="card">
+                <div class="completion-container">
+                    <div class="completion-message">
+                        <h2>롯데홈쇼핑 혜택 매장의 카드 분류하기 리서치에 참여해주셔서 감사합니다.</h2>
+                        <p>응답해주신 결과는 혜택 매장의 메뉴 개선에 크게 도움이 될 거예요 : D</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 완료 모달 -->
-    <div class="completion-modal" id="completion-modal">
+    <!-- 새 그룹 생성 모달 -->
+    <div id="create-group-modal" class="modal">
         <div class="modal-content">
-            <h3>🎉 분류 완료!</h3>
-            <p>카드 소팅에 참여해주셔서 감사합니다.</p>
-            <div class="result-summary" id="final-summary"></div>
-            <div class="action-buttons">
-                <button class="btn btn-primary btn-large" onclick="downloadResult()">💾 결과 다운로드</button>
-                <button class="btn btn-success btn-large" onclick="emailResult()">📧 이메일 전송</button>
+            <h3>새 그룹 만들기</h3>
+            <div class="form-group">
+                <label class="form-label">그룹 이름</label>
+                <input 
+                    type="text" 
+                    id="new-group-name" 
+                    class="form-control" 
+                    placeholder="그룹 이름을 입력하세요"
+                    maxlength="50"
+                >
             </div>
-            <button class="btn btn-danger" onclick="closeModal()" style="margin-top: 20px;">닫기</button>
+            <div class="flex gap-2 justify-center">
+                <button class="btn btn-secondary" onclick="closeModal('create-group-modal')">취소</button>
+                <button class="btn btn-primary" onclick="confirmCreateGroup()">생성</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 카드 분류하기 방법 가이드 모달 -->
+    <div id="sorting-guide-modal" class="modal">
+        <div class="modal-content">
+            <h3>📖 카드 분류하기 안내서</h3>
+            <div style="padding: 20px 0; line-height: 1.8;">
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <p style="margin-bottom: 15px; font-size: 16px;"><strong>꼭! 읽어주세요!💜</strong></p>
+                    <p style="margin-bottom: 15px; font-size: 16px;"><strong>1.</strong> 왼쪽에 있는 미분류 카드의 '카드 내용'을 꼼꼼하게 확인해주세요.</p>
+                    <p style="margin-bottom: 15px; font-size: 14px; color: #667eea; padding-left: 20px; font-style: italic;">
+                        *카드 내용은 롯데홈쇼핑 혜택 메뉴에서 제공하고 있는 혜택들이에요!
+                    </p>
+                    <p style="margin-bottom: 15px; font-size: 16px;"><strong>2.</strong> 왼쪽에 있는 카드를 관련성이 높다고 생각되는 오른쪽 그룹으로 옮겨주세요.</p>
+                    <p style="margin-bottom: 15px; font-size: 16px;"><strong>3.</strong> 그룹 이름을 변경하고 싶다면, 그룹 이름을 클릭해 원하는 이름으로 수정해 주세요.</p>
+                    <p style="margin-bottom: 15px; font-size: 16px;"><strong>4.</strong> 오른쪽 상단의 '새 그룹 만들기' 버튼을 눌러 새로운 그룹도 추가할 수 있어요.</p>
+                    <p style="margin-bottom: 0; font-size: 16px;"><strong>5.</strong> 모든 카드를 그룹으로 옮기셨다면, '응답 제출하기' 버튼을 눌러 주세요.</p>
+                </div>
+                
+                <p style="color: #666; font-style: italic; text-align: center; margin-top: 20px;">
+                    ⭐지금 보고 계신 '카드 분류하기 안내서'는 버튼을 통해 언제든 다시 볼 수 있어요.
+                </p>
+            </div>
+            <div class="flex justify-center">
+                <button class="btn btn-primary" onclick="closeModal('sorting-guide-modal')">확인</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // 전역 변수
-        let studyData = {
-            title: '',
-            description: '',
-            cards: [],
-            groups: [],
-            isOpenSorting: true
-        };
+        // ============================================
+        // 🔗 Google Sheets 연동 설정
+        // ============================================
         
-        let participantData = {
-            name: '',
+        let GOOGLE_APPS_SCRIPT_URL = '';
+        let SPREADSHEET_ID = '';
+
+        // ============================================
+        // 전역 변수 및 상태 관리
+        // ============================================
+        
+        let appState = {
+            currentUser: null,
+            currentProject: null,
+            currentParticipant: null,
+            sortingData: null,
             startTime: null,
-            endTime: null,
-            sortingResult: {}
+            surveyData: null
         };
 
-        let baseURL = 'https://your-site.netlify.app'; // 기본 URL
+        const DEFAULT_PROJECT = {
+            id: 'default-project',
+            title: '혜택 콘텐츠 카드소팅',
+            cards: [
+                '방송 알림 신청하고 적립금 받기',
+                '멤버십 가입하고 할인 쿠폰 받기', 
+                '방송 채팅 남기고 적립금 받기',
+                '친구 추천하고 포인트 받기',
+                '첫 구매 후 캐시백 받기',
+                '리뷰 작성하고 적립금 받기',
+                '생일 쿠폰 받기',
+                '등급별 할인 혜택',
+                '무료배송 혜택',
+                '적립금 혜택'
+            ],
+            sortingType: 'hybrid',
+            predefinedGroups: ['구매혜택', '참여혜택', '카드/결제혜택'],
+            shuffleCards: true,
+            allowEditGroups: true,
+            createdAt: new Date().toISOString()
+        };
 
-        // 초기화
-        function init() {
-            loadSampleData();
-            renderResearcherMode();
-        }
+        // ============================================
+        // 🔗 Google Sheets 연동 함수들
+        // ============================================
 
-        // 샘플 데이터 로드
-        function loadSampleData() {
-            studyData.cards = ['스마트폰', '노트북', '태블릿', '냉장고', '세탁기', '전자레인지', '블라우스', '청바지', '운동화'];
-            studyData.groups = ['전자기기', '가전제품', '의류'];
-            studyData.title = '쇼핑몰 카테고리 구조 최적화 연구';
-            studyData.description = '사용자가 인식하는 상품 카테고리 분류 방식을 알아보는 연구입니다.';
-        }
-
-        // 모드 전환
-        function switchMode(mode) {
-            // 모든 모드 비활성화
-            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.researcher-mode, .participant-mode').forEach(content => content.classList.remove('active'));
-            
-            // 선택된 모드 활성화
-            event.target.classList.add('active');
-            document.getElementById(mode + '-mode').classList.add('active');
-
-            if (mode === 'researcher') {
-                renderResearcherMode();
-            } else {
-                renderParticipantMode();
-            }
-        }
-
-        // 연구자 모드 렌더링
-        function renderResearcherMode() {
-            document.getElementById('study-title').value = studyData.title;
-            document.getElementById('study-description').value = studyData.description;
-            document.getElementById('base-url').value = baseURL;
-            renderCardsList();
-            renderGroupsList();
-        }
-
-        function renderCardsList() {
-            const cardsList = document.getElementById('cards-list');
-            cardsList.innerHTML = '';
-            studyData.cards.forEach((card, index) => {
-                cardsList.innerHTML += `
-                    <div class="item-tag">
-                        ${card}
-                        <button class="remove-btn" onclick="removeCard(${index})">×</button>
-                    </div>
-                `;
-            });
-        }
-
-        function renderGroupsList() {
-            const groupsList = document.getElementById('groups-list');
-            groupsList.innerHTML = '';
-            studyData.groups.forEach((group, index) => {
-                groupsList.innerHTML += `
-                    <div class="item-tag">
-                        ${group}
-                        <button class="remove-btn" onclick="removeGroup(${index})">×</button>
-                    </div>
-                `;
-            });
-        }
-
-        // 카드 추가
-        function addCard() {
-            const input = document.getElementById('card-input');
-            const cardText = input.value.trim();
-            
-            if (!cardText) {
-                showToast('카드 내용을 입력해주세요', 'error');
-                return;
-            }
-            
-            if (studyData.cards.length >= 100) {
-                showToast('카드는 최대 100개까지 추가할 수 있습니다', 'error');
-                return;
-            }
-            
-            if (studyData.cards.includes(cardText)) {
-                showToast('이미 존재하는 카드입니다', 'error');
-                return;
-            }
-            
-            studyData.cards.push(cardText);
-            input.value = '';
-            renderCardsList();
-            showToast('카드가 추가되었습니다');
-        }
-
-        // 그룹 추가
-        function addGroup() {
-            const input = document.getElementById('group-input');
-            const groupText = input.value.trim();
-            
-            if (!groupText) {
-                showToast('그룹명을 입력해주세요', 'error');
-                return;
-            }
-            
-            if (studyData.groups.length >= 30) {
-                showToast('그룹은 최대 30개까지 추가할 수 있습니다', 'error');
-                return;
-            }
-            
-            if (studyData.groups.includes(groupText)) {
-                showToast('이미 존재하는 그룹입니다', 'error');
-                return;
-            }
-            
-            studyData.groups.push(groupText);
-            input.value = '';
-            renderGroupsList();
-            showToast('그룹이 추가되었습니다');
-        }
-
-        // 카드/그룹 제거
-        function removeCard(index) {
-            studyData.cards.splice(index, 1);
-            renderCardsList();
-            showToast('카드가 제거되었습니다');
-        }
-
-        function removeGroup(index) {
-            studyData.groups.splice(index, 1);
-            renderGroupsList();
-            showToast('그룹이 제거되었습니다');
-        }
-
-        // HTML 파일 다운로드
-        function downloadHTMLFile() {
-            const htmlContent = document.documentElement.outerHTML;
-            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'card-sorting-tool.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showToast('HTML 파일이 다운로드되었습니다!');
-        }
-
-        // 베이스 URL 업데이트
-        function updateBaseURL() {
-            const urlInput = document.getElementById('base-url').value.trim();
-            if (urlInput) {
-                baseURL = urlInput.endsWith('/') ? urlInput.slice(0, -1) : urlInput;
-                showToast('배포 URL이 저장되었습니다');
-            } else {
-                showToast('올바른 URL을 입력해주세요', 'error');
-            }
-        }
-
-        // URL 생성
-        function generateStudyURL() {
-            if (studyData.cards.length === 0) {
-                showToast('최소 1개 이상의 카드를 추가해주세요', 'error');
-                return;
-            }
-
-            // 연구 정보 업데이트
-            studyData.title = document.getElementById('study-title').value.trim() || '카드 소팅 연구';
-            studyData.description = document.getElementById('study-description').value.trim() || '카드를 적절한 그룹으로 분류해주세요.';
-            studyData.isOpenSorting = studyData.groups.length === 0;
-
-            // URL 매개변수로 데이터 인코딩
-            const encodedData = btoa(encodeURIComponent(JSON.stringify(studyData)));
-            
-            // 실제 배포 URL 사용
-            let finalURL = baseURL;
-            
-            // 현재 환경이 실제 웹사이트인지 확인
-            const currentLocation = window.location.href;
-            if (!currentLocation.includes('about:srcdoc') && !currentLocation.includes('localhost')) {
-                finalURL = currentLocation.split('?')[0];
-            }
-            
-            const studyURL = `${finalURL}?study=${encodedData}`;
-            
-            document.getElementById('study-url').textContent = studyURL;
-            document.getElementById('url-generator').style.display = 'block';
-            showToast('참여자 URL이 생성되었습니다!');
-        }
-
-        // URL 복사
-        function copyURL() {
-            const urlText = document.getElementById('study-url').textContent;
-            navigator.clipboard.writeText(urlText).then(() => {
-                showToast('URL이 클립보드에 복사되었습니다');
-            }).catch(() => {
-                showToast('복사에 실패했습니다', 'error');
-            });
-        }
-
-        // 참여자 화면 테스트
-        function testParticipantMode() {
-            switchMode('participant');
-            loadStudyFromURL();
-        }
-
-        // 참여자 모드 렌더링
-        function renderParticipantMode() {
-            // URL에서 연구 데이터 로드
-            loadStudyFromURL();
-            
-            document.getElementById('display-study-title').textContent = studyData.title;
-            document.getElementById('display-study-description').textContent = studyData.description;
-        }
-
-        // URL에서 연구 데이터 로드
-        function loadStudyFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const studyParam = urlParams.get('study');
-            
-            if (studyParam) {
+        /**
+         * JSONP 방식으로 Google Sheets에 데이터 저장 (CORS 우회)
+         */
+        async function saveToGoogleSheets(responseData, projectConfig) {
+            return new Promise((resolve, reject) => {
                 try {
-                    const decodedData = JSON.parse(decodeURIComponent(atob(studyParam)));
-                    studyData = decodedData;
-                    document.getElementById('display-study-title').textContent = studyData.title;
-                    document.getElementById('display-study-description').textContent = studyData.description;
+                    if (!GOOGLE_APPS_SCRIPT_URL) {
+                        throw new Error('Google Apps Script URL이 설정되지 않았습니다.');
+                    }
+
+                    console.log('🔗 Google Sheets 저장 시작 (JSONP 방식)...');
+                    
+                    // 데이터 포맷팅
+                    const exportData = formatResponseForExport(responseData, projectConfig);
+                    
+                    // 콜백 함수명 생성
+                    const callbackName = 'jsonp_callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+                    
+                    // 전역 콜백 함수 등록
+                    window[callbackName] = function(response) {
+                        // 콜백 실행 후 정리
+                        delete window[callbackName];
+                        if (document.head.contains(script)) {
+                            document.head.removeChild(script);
+                        }
+                        
+                        console.log('📊 Google Sheets 응답:', response);
+                        
+                        if (response && response.status === 'success') {
+                            showNotification('✅ Google Sheets에 성공적으로 저장되었습니다!', 'success');
+                            resolve(response);
+                        } else {
+                            reject(new Error(response?.message || '저장 실패'));
+                        }
+                    };
+                    
+                    // URL 구성
+                    const dataString = JSON.stringify(exportData);
+                    console.log('전송 데이터 크기:', dataString.length, 'bytes');
+                    
+                    let params;
+                    if (dataString.length > 8000) {
+                        // 데이터가 너무 큰 경우 핵심 정보만 전송
+                        const minimalData = {
+                            이름: exportData.이름,
+                            휴대폰뒷번호4자리: exportData.휴대폰뒷번호4자리,
+                            완료시간: exportData.완료시간,
+                            소요시간: exportData.소요시간,
+                            그룹별결과: exportData.그룹별결과,
+                            가장많이사용하는혜택: exportData.가장많이사용하는혜택,
+                            가장적게사용하는혜택: exportData.가장적게사용하는혜택,
+                            참여자의견: exportData.참여자의견
+                        };
+                        params = new URLSearchParams({
+                            action: 'save',
+                            data: JSON.stringify(minimalData),
+                            callback: callbackName
+                        });
+                        console.log('⚠️ 데이터 크기 초과로 핵심 정보만 전송');
+                    } else {
+                        params = new URLSearchParams({
+                            action: 'save',
+                            data: dataString,
+                            callback: callbackName
+                        });
+                    }
+                    
+                    const url = `${GOOGLE_APPS_SCRIPT_URL}?${params.toString()}`;
+                    console.log('요청 URL 길이:', url.length);
+                    
+                    // 동적 스크립트 태그 생성 (JSONP)
+                    const script = document.createElement('script');
+                    script.src = url;
+                    script.onerror = function() {
+                        delete window[callbackName];
+                        if (document.head.contains(script)) {
+                            document.head.removeChild(script);
+                        }
+                        reject(new Error('네트워크 오류: Google Apps Script 연결 실패'));
+                    };
+                    
+                    // 타임아웃 설정 (30초)
+                    setTimeout(() => {
+                        if (window[callbackName]) {
+                            delete window[callbackName];
+                            if (document.head.contains(script)) {
+                                document.head.removeChild(script);
+                            }
+                            reject(new Error('타임아웃: Google Apps Script 응답 없음 (30초)'));
+                        }
+                    }, 30000);
+                    
+                    document.head.appendChild(script);
+                    console.log('📤 JSONP 요청 전송 완료');
+                    
                 } catch (error) {
-                    showToast('연구 데이터를 불러오는데 실패했습니다', 'error');
+                    console.error('❌ Google Sheets 저장 실패:', error);
+                    reject(error);
                 }
+            });
+        }
+
+        /**
+         * 연결 테스트 함수
+         */
+        async function testConnection() {
+            const webappUrl = document.getElementById('webapp-url').value.trim();
+            const spreadsheetId = document.getElementById('spreadsheet-id').value.trim();
+            
+            const statusDiv = document.getElementById('connection-status');
+            statusDiv.innerHTML = '<strong>연결 상태:</strong> 테스트 중...';
+            statusDiv.className = 'alert alert-info';
+            
+            // 입력값 검증
+            if (!webappUrl) {
+                statusDiv.innerHTML = '❌ <strong>오류:</strong> 웹앱 URL을 입력해주세요.';
+                statusDiv.className = 'alert alert-warning';
+                return;
+            }
+            
+            if (!spreadsheetId) {
+                statusDiv.innerHTML = '❌ <strong>오류:</strong> 스프레드시트 ID를 입력해주세요.';
+                statusDiv.className = 'alert alert-warning';
+                return;
+            }
+            
+            // URL 형식 검증
+            if (!webappUrl.includes('script.google.com/macros/s/')) {
+                statusDiv.innerHTML = '❌ <strong>오류:</strong> 올바른 Google Apps Script 웹앱 URL을 입력해주세요.';
+                statusDiv.className = 'alert alert-warning';
+                return;
+            }
+            
+            // 설정 임시 저장
+            GOOGLE_APPS_SCRIPT_URL = webappUrl;
+            SPREADSHEET_ID = spreadsheetId;
+            
+            try {
+                // JSONP 테스트 요청
+                const result = await new Promise((resolve, reject) => {
+                    const callbackName = 'test_callback_' + Date.now();
+                    
+                    window[callbackName] = function(response) {
+                        delete window[callbackName];
+                        if (document.head.contains(script)) {
+                            document.head.removeChild(script);
+                        }
+                        resolve(response);
+                    };
+                    
+                    const params = new URLSearchParams({
+                        action: 'test',
+                        callback: callbackName
+                    });
+                    
+                    const script = document.createElement('script');
+                    script.src = `${webappUrl}?${params.toString()}`;
+                    script.onerror = function() {
+                        delete window[callbackName];
+                        if (document.head.contains(script)) {
+                            document.head.removeChild(script);
+                        }
+                        reject(new Error('네트워크 연결 실패'));
+                    };
+                    
+                    setTimeout(() => {
+                        if (window[callbackName]) {
+                            delete window[callbackName];
+                            if (document.head.contains(script)) {
+                                document.head.removeChild(script);
+                            }
+                            reject(new Error('응답 시간 초과'));
+                        }
+                    }, 10000);
+                    
+                    document.head.appendChild(script);
+                });
+                
+                if (result && result.status === 'success') {
+                    statusDiv.innerHTML = '✅ <strong>연결 성공!</strong> Google Sheets와 정상 연결되었습니다.';
+                    statusDiv.className = 'alert alert-success';
+                    
+                    // 설정 저장
+                    localStorage.setItem('google_sheets_config', JSON.stringify({
+                        webappUrl: webappUrl,
+                        spreadsheetId: spreadsheetId
+                    }));
+                } else {
+                    throw new Error(result?.message || '연결 실패');
+                }
+                
+            } catch (error) {
+                console.error('연결 테스트 실패:', error);
+                statusDiv.innerHTML = `❌ <strong>연결 실패:</strong> ${error.message}`;
+                statusDiv.className = 'alert alert-warning';
             }
         }
 
-        // 카드 소팅 시작
-        function startSorting() {
-            const participantName = document.getElementById('participant-name').value.trim();
+        /**
+         * Google Sheets 열기
+         */
+        function openGoogleSheets() {
+            const config = loadFromStorage('google_sheets_config');
+            const spreadsheetId = config?.spreadsheetId || document.getElementById('spreadsheet-id').value.trim();
             
-            if (!participantName) {
-                showToast('참여자 이름을 입력해주세요', 'error');
+            if (spreadsheetId) {
+                const sheetsUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit`;
+                window.open(sheetsUrl, '_blank');
+            } else {
+                showNotification('⚠️ 스프레드시트 ID가 설정되지 않았습니다.', 'warning');
+            }
+        }
+
+        /**
+         * 알림 표시 함수
+         */
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            
+            const colors = {
+                success: { bg: '#d4edda', border: '#28a745', text: '#155724' },
+                warning: { bg: '#fff3cd', border: '#ffc107', text: '#856404' },
+                error: { bg: '#f8d7da', border: '#dc3545', text: '#721c24' },
+                info: { bg: '#d1ecf1', border: '#17a2b8', text: '#0c5460' }
+            };
+            
+            const color = colors[type] || colors.info;
+            notification.style.backgroundColor = color.bg;
+            notification.style.borderColor = color.border;
+            notification.style.color = color.text;
+            
+            notification.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="background: none; border: none; font-size: 20px; cursor: pointer; color: ${color.text}; margin-left: 15px;">×</button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // ============================================
+        // 기본 유틸리티 함수들
+        // ============================================
+
+        function saveToStorage(key, data) {
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+                return true;
+            } catch (error) {
+                console.error('저장 실패:', error);
+                return false;
+            }
+        }
+
+        function loadFromStorage(key, defaultValue = null) {
+            try {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : defaultValue;
+            } catch (error) {
+                console.error('불러오기 실패:', error);
+                return defaultValue;
+            }
+        }
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // ============================================
+        // 페이지 네비게이션 함수들
+        // ============================================
+
+        function showWelcomePage() {
+            showPage('welcome-page');
+        }
+
+        function showParticipantLogin() {
+            showPage('participant-login-page');
+        }
+
+        function showAdminLogin() {
+            showPage('admin-login-page');
+        }
+
+        function openParticipantURL() {
+            const baseURL = window.location.origin + window.location.pathname;
+            const participantURL = `${baseURL}?mode=participant`;
+            window.open(participantURL, '_blank');
+        }
+
+        function returnToLogin() {
+            if (confirm('진행 중인 카드소팅이 있습니다. 로그인 페이지로 돌아가시겠습니까?\n(진행 상황은 자동으로 저장됩니다.)')) {
+                if (appState.sortingData) {
+                    autoSave();
+                }
+                showParticipantLogin();
+            }
+        }
+
+        function adminLogin(event) {
+            event.preventDefault();
+            const password = document.getElementById('admin-password').value;
+            if (password === 'LHLH') {
+                appState.currentUser = { role: 'admin' };
+                showPage('admin-dashboard-page');
+                loadAdminData();
+                updateResponseStats();
+            } else {
+                showNotification('비밀번호가 올바르지 않습니다.', 'error');
+            }
+        }
+
+        function adminLogout() {
+            appState.currentUser = null;
+            window.location.href = window.location.pathname + '?mode=admin';
+        }
+
+        function loadAdminData() {
+            const project = loadFromStorage('current_project', DEFAULT_PROJECT);
+            document.getElementById('project-title').value = project.title;
+            document.getElementById('sorting-type').value = project.sortingType;
+            document.getElementById('predefined-groups').value = project.predefinedGroups.join('\n');
+            document.getElementById('card-list').value = project.cards.join('\n');
+            document.getElementById('shuffle-cards').checked = project.shuffleCards || false;
+            document.getElementById('allow-edit-groups').checked = project.allowEditGroups || false;
+            updateCardCount();
+            updateSortingTypeVisibility();
+            
+            // Google Sheets 설정 로드
+            const config = loadFromStorage('google_sheets_config');
+            if (config) {
+                document.getElementById('webapp-url').value = config.webappUrl || '';
+                document.getElementById('spreadsheet-id').value = config.spreadsheetId || '';
+                GOOGLE_APPS_SCRIPT_URL = config.webappUrl || '';
+                SPREADSHEET_ID = config.spreadsheetId || '';
+            }
+        }
+
+        function addNewCard() {
+            const newCard = document.getElementById('new-card').value.trim();
+            if (!newCard) return;
+            const cardList = document.getElementById('card-list');
+            const currentCards = cardList.value.trim();
+            if (currentCards) {
+                cardList.value = currentCards + '\n' + newCard;
+            } else {
+                cardList.value = newCard;
+            }
+            document.getElementById('new-card').value = '';
+            updateCardCount();
+        }
+
+        function updateCardCount() {
+            const cards = document.getElementById('card-list').value.trim().split('\n').filter(card => card.trim());
+            document.getElementById('card-count').textContent = cards.length;
+        }
+
+        function updateSortingTypeVisibility() {
+            const sortingType = document.getElementById('sorting-type').value;
+            const groupsSection = document.getElementById('predefined-groups-section');
+            if (sortingType === 'open') {
+                groupsSection.style.display = 'none';
+            } else {
+                groupsSection.style.display = 'block';
+            }
+        }
+
+        function generateURL() {
+            // Google Sheets 설정 저장
+            const webappUrl = document.getElementById('webapp-url').value.trim();
+            const spreadsheetId = document.getElementById('spreadsheet-id').value.trim();
+            
+            if (webappUrl && spreadsheetId) {
+                GOOGLE_APPS_SCRIPT_URL = webappUrl;
+                SPREADSHEET_ID = spreadsheetId;
+                
+                localStorage.setItem('google_sheets_config', JSON.stringify({
+                    webappUrl: webappUrl,
+                    spreadsheetId: spreadsheetId
+                }));
+            }
+
+            const project = {
+                id: generateId(),
+                title: document.getElementById('project-title').value.trim(),
+                sortingType: document.getElementById('sorting-type').value,
+                predefinedGroups: document.getElementById('predefined-groups').value.trim().split('\n').filter(g => g.trim()),
+                cards: document.getElementById('card-list').value.trim().split('\n').filter(c => c.trim()),
+                shuffleCards: document.getElementById('shuffle-cards').checked,
+                allowEditGroups: document.getElementById('allow-edit-groups').checked,
+                createdAt: new Date().toISOString()
+            };
+
+            if (!project.title || project.cards.length === 0) {
+                showNotification('프로젝트 제목과 카드 목록을 입력해주세요.', 'warning');
                 return;
             }
 
-            participantData.name = participantName;
-            participantData.startTime = new Date().toISOString();
-            participantData.sortingResult = {};
+            if (project.cards.length > 100) {
+                showNotification('카드는 최대 100개까지 입력할 수 있습니다.', 'warning');
+                return;
+            }
 
-            // 그룹 초기화
-            studyData.groups.forEach(group => {
-                participantData.sortingResult[group] = [];
-            });
+            saveToStorage('current_project', project);
+            appState.currentProject = project;
 
-            document.getElementById('sorting-interface').style.display = 'block';
-            renderSortingInterface();
-            updateProgress();
-            showToast('카드 소팅을 시작합니다!');
+            const baseURL = window.location.origin + window.location.pathname;
+            const projectURL = `${baseURL}?mode=participant`;
+            
+            document.getElementById('generated-url').value = projectURL;
+            document.getElementById('generated-url-section').classList.remove('hidden');
+
+            showNotification('프로젝트가 저장되고 URL이 생성되었습니다!', 'success');
         }
 
-        // 소팅 인터페이스 렌더링
-        function renderSortingInterface() {
-            renderGroupsGrid();
-            renderCardsGrid();
+        function copyURL() {
+            const urlInput = document.getElementById('generated-url');
+            urlInput.select();
+            document.execCommand('copy');
+            showNotification('URL이 클립보드에 복사되었습니다!', 'success');
         }
 
-        function renderGroupsGrid() {
-            const groupsGrid = document.getElementById('groups-grid');
-            groupsGrid.innerHTML = '';
+        function updateResponseStats() {
+            const responses = getAllResponses();
+            const completed = responses.filter(r => r.isCompleted);
+            const ongoing = responses.filter(r => !r.isCompleted);
             
-            // 기존 그룹들
-            studyData.groups.forEach((group, index) => {
-                groupsGrid.innerHTML += `
-                    <div class="group-box" data-group="${group}" ondragover="allowDrop(event)" ondrop="dropCard(event)">
-                        <div class="group-header">
-                            <div class="group-name">${group}</div>
-                        </div>
-                        <div class="group-cards" id="group-${group.replace(/\s+/g, '-')}"></div>
-                    </div>
-                `;
-            });
-            
-            // 오픈 소팅인 경우 새 그룹 추가 버튼
-            if (studyData.isOpenSorting) {
-                groupsGrid.innerHTML += `
-                    <div class="add-group-btn" onclick="addNewGroup()">
-                        ➕ 새 그룹 추가
-                    </div>
-                `;
+            const avgDuration = completed.length > 0 
+                ? Math.round(completed.reduce((sum, r) => sum + (r.duration || 0), 0) / completed.length / 60)
+                : 0;
+
+            document.getElementById('total-responses').textContent = responses.length;
+            document.getElementById('completed-responses').textContent = completed.length;
+            document.getElementById('ongoing-responses').textContent = ongoing.length;
+            document.getElementById('avg-duration').textContent = avgDuration + '분';
+        }
+
+        function getAllResponses() {
+            const responses = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('participant_')) {
+                    const data = loadFromStorage(key);
+                    if (data) responses.push(data);
+                }
+            }
+            return responses;
+        }
+
+        function downloadAllResponses() {
+            const responses = getAllResponses();
+            if (responses.length === 0) {
+                showNotification('다운로드할 응답이 없습니다.', 'warning');
+                return;
+            }
+
+            const project = loadFromStorage('current_project', DEFAULT_PROJECT);
+            const exportData = {
+                projectInfo: project,
+                exportDate: new Date().toISOString(),
+                totalResponses: responses.length,
+                responses: responses.map(r => formatResponseForExport(r, project))
+            };
+
+            downloadJSON(exportData, `카드소팅_전체응답_${project.title}_${new Date().toISOString().split('T')[0]}.json`);
+        }
+
+        function clearAllData() {
+            if (confirm('모든 응답 데이터를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                for (let i = localStorage.length - 1; i >= 0; i--) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith('participant_')) {
+                        localStorage.removeItem(key);
+                    }
+                }
+                updateResponseStats();
+                showNotification('모든 응답 데이터가 삭제되었습니다.', 'success');
             }
         }
 
-        function renderCardsGrid() {
-            const cardsGrid = document.getElementById('cards-grid');
-            cardsGrid.innerHTML = '';
+        // ============================================
+        // 참여자 관련 함수들
+        // ============================================
+
+        function participantLogin(event) {
+            event.preventDefault();
+            const name = document.getElementById('participant-name').value.trim();
+            const phone = document.getElementById('participant-phone').value.trim();
             
-            studyData.cards.forEach((card, index) => {
-                const isAssigned = Object.values(participantData.sortingResult).some(groupCards => groupCards.includes(card));
-                if (!isAssigned) {
-                    cardsGrid.innerHTML += `
-                        <div class="card-item" draggable="true" ondragstart="dragStart(event)" data-card="${card}">
-                            ${card}
-                        </div>
-                    `;
-                }
+            if (!name || !phone) {
+                showNotification('이름과 휴대폰 뒷번호를 올바르게 입력해주세요.', 'warning');
+                return;
+            }
+
+            if (!/^[가-힣]+$/.test(name)) {
+                showNotification('이름은 한글만 입력해주세요.', 'warning');
+                return;
+            }
+
+            if (!/^[0-9]{4}$/.test(phone)) {
+                showNotification('휴대폰 뒷번호는 숫자 4자리만 입력해주세요.', 'warning');
+                return;
+            }
+
+            const participantId = `${name}_${phone}`;
+            const existingData = loadFromStorage(`participant_${participantId}`);
+            
+            if (existingData && !existingData.isCompleted) {
+                appState.currentParticipant = { name, phone, id: participantId };
+                document.getElementById('existing-response-notice').classList.remove('hidden');
+                return;
+            }
+
+            startNewSorting(name, phone, participantId);
+        }
+
+        function continueExisting() {
+            const { name, phone, id } = appState.currentParticipant;
+            const existingData = loadFromStorage(`participant_${id}`);
+            appState.sortingData = existingData;
+            appState.startTime = new Date(existingData.startTime);
+            startSortingPage();
+        }
+
+        function startNew() {
+            const { name, phone, id } = appState.currentParticipant;
+            startNewSorting(name, phone, id);
+        }
+
+        function startNewSorting(name, phone, participantId) {
+            const project = loadFromStorage('current_project', DEFAULT_PROJECT);
+            appState.currentParticipant = { name, phone, id: participantId };
+            appState.currentProject = project;
+            appState.startTime = new Date();
+            
+            let cards = [...project.cards];
+            if (project.shuffleCards) {
+                cards = shuffleArray(cards);
+            }
+            
+            appState.sortingData = {
+                participantId,
+                name,
+                phone,
+                startTime: appState.startTime.toISOString(),
+                lastSaveTime: appState.startTime.toISOString(),
+                completedTime: null,
+                duration: 0,
+                isCompleted: false,
+                sortingType: project.sortingType,
+                groups: initializeGroups(project),
+                unassignedCards: cards.map((card, index) => ({
+                    id: `card-${index}`,
+                    content: card,
+                    originalIndex: index
+                })),
+                modifiedGroupNames: []
+            };
+
+            startSortingPage();
+        }
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function initializeGroups(project) {
+            const groups = {};
+            if (project.sortingType !== 'open') {
+                project.predefinedGroups.forEach((groupName, index) => {
+                    groups[`group-${index}`] = {
+                        id: `group-${index}`,
+                        name: groupName,
+                        originalName: groupName,
+                        isCustom: false,
+                        cards: [],
+                        order: index
+                    };
+                });
+            }
+            return groups;
+        }
+
+        function startSortingPage() {
+            showPage('sorting-page');
+            const { name } = appState.currentParticipant;
+            const { sortingType } = appState.currentProject;
+            
+            document.getElementById('sorting-participant-name').textContent = '롯데홈쇼핑 온라인 리서치';
+                document.getElementById('sorting-type-info').textContent = '혜택 카드 분류하기';
+            
+            const createGroupBtn = document.getElementById('create-group-btn');
+            if (sortingType === 'closed') {
+                createGroupBtn.style.display = 'none';
+            } else {
+                createGroupBtn.style.display = 'block';
+            }
+            
+            renderSortingUI();
+            updateProgress();
+            
+            if (!sessionStorage.getItem('guide_shown')) {
+                showSortingGuide();
+                sessionStorage.setItem('guide_shown', 'true');
+            }
+        }
+
+        function getSortingTypeText(type) {
+            switch (type) {
+                case 'open': return '오픈 소팅 (그룹 자유 생성)';
+                case 'closed': return '클로즈드 소팅 (고정 그룹)';
+                case 'hybrid': return '하이브리드 소팅 (기본 + 사용자 생성)';
+                default: return '카드소팅 진행 중';
+            }
+        }
+
+        function renderSortingUI() {
+            renderCardPool();
+            renderGroups();
+        }
+
+        function renderCardPool() {
+            const cardPool = document.getElementById('card-pool');
+            const cardPoolContainer = cardPool.parentElement;
+            const { unassignedCards } = appState.sortingData;
+            cardPool.innerHTML = '';
+            
+            if (!cardPoolContainer.hasAttribute('data-drop-enabled')) {
+                cardPoolContainer.addEventListener('dragover', handleDragOver);
+                cardPoolContainer.addEventListener('drop', handleDropToPool);
+                cardPoolContainer.addEventListener('dragenter', handleDragEnterPool);
+                cardPoolContainer.addEventListener('dragleave', handleDragLeavePool);
+                cardPoolContainer.setAttribute('data-drop-enabled', 'true');
+            }
+            
+            unassignedCards.forEach(card => {
+                const cardElement = createCardElement(card);
+                cardPool.appendChild(cardElement);
+            });
+            
+            document.getElementById('unassigned-count').textContent = unassignedCards.length;
+        }
+
+        function createCardElement(card) {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'card-item';
+            cardDiv.textContent = card.content;
+            cardDiv.draggable = true;
+            cardDiv.dataset.cardId = card.id;
+            
+            cardDiv.addEventListener('dragstart', handleDragStart);
+            cardDiv.addEventListener('dragend', handleDragEnd);
+            
+            return cardDiv;
+        }
+
+        function renderGroups() {
+            const container = document.getElementById('groups-container');
+            const { groups } = appState.sortingData;
+            container.innerHTML = '';
+            
+            const sortedGroups = Object.values(groups).sort((a, b) => (a.order || 0) - (b.order || 0));
+            
+            sortedGroups.forEach((group, index) => {
+                const groupElement = createGroupElement(group, index + 1);
+                container.appendChild(groupElement);
+            });
+            
+            if (!container.hasAttribute('data-group-sort-enabled')) {
+                container.addEventListener('dragover', handleGroupDragOver);
+                container.addEventListener('drop', handleGroupDrop);
+                container.setAttribute('data-group-sort-enabled', 'true');
+            }
+        }
+
+        function createGroupElement(group, rank) {
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'group-container';
+            groupDiv.dataset.groupId = group.id;
+            groupDiv.draggable = true;
+            
+            groupDiv.addEventListener('dragover', handleDragOver);
+            groupDiv.addEventListener('drop', handleDrop);
+            groupDiv.addEventListener('dragenter', handleDragEnter);
+            groupDiv.addEventListener('dragleave', handleDragLeave);
+            groupDiv.addEventListener('dragstart', handleGroupDragStart);
+            groupDiv.addEventListener('dragend', handleGroupDragEnd);
+            
+            const dragHandle = document.createElement('div');
+            dragHandle.className = 'group-drag-handle';
+            dragHandle.innerHTML = '⋮⋮';
+            dragHandle.title = '그룹 순서 변경 (드래그)';
+            groupDiv.appendChild(dragHandle);
+            
+            const metaInfo = document.createElement('div');
+            metaInfo.className = 'group-meta-info';
+            
+            const rankDiv = document.createElement('div');
+            rankDiv.className = 'group-rank';
+            rankDiv.textContent = `그룹${rank}`;
+            metaInfo.appendChild(rankDiv);
+            
+            const cardCountDiv = document.createElement('div');
+            cardCountDiv.className = 'group-card-count';
+            cardCountDiv.textContent = `카드 수: ${group.cards.length}개`;
+            metaInfo.appendChild(cardCountDiv);
+            
+            groupDiv.appendChild(metaInfo);
+            
+            const header = document.createElement('div');
+            header.className = 'group-header';
+            
+            const title = document.createElement('div');
+            title.className = 'group-title editable';
+            title.textContent = group.name;
+            
+            const allowEdit = appState.currentProject.allowEditGroups;
+            if (allowEdit || group.isCustom) {
+                title.addEventListener('click', () => editGroupName(group.id));
+            }
+            
+            const actions = document.createElement('div');
+            actions.className = 'group-actions';
+            
+            if (group.isCustom) {
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-group-btn';
+                deleteBtn.textContent = '×';
+                deleteBtn.onclick = () => deleteGroup(group.id);
+                actions.appendChild(deleteBtn);
+            }
+            
+            header.appendChild(title);
+            header.appendChild(actions);
+            
+            const content = document.createElement('div');
+            content.className = 'group-content';
+            
+            if (group.cards.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'empty-group';
+                empty.textContent = '카드를 여기에 드래그하세요';
+                content.appendChild(empty);
+            } else {
+                group.cards.forEach(card => {
+                    const cardElement = createCardElement(card);
+                    content.appendChild(cardElement);
+                });
+            }
+            
+            groupDiv.appendChild(header);
+            groupDiv.appendChild(content);
+            
+            return groupDiv;
+        }
+
+        // ============================================
+        // 드래그 앤 드롭 함수들
+        // ============================================
+
+        function handleGroupDragStart(event) {
+            if (!event.target.classList.contains('group-container')) return;
+            
+            const groupId = event.target.dataset.groupId;
+            event.dataTransfer.setData('text/group-id', groupId);
+            event.target.classList.add('dragging-group');
+            event.dataTransfer.setData('text/drag-type', 'group');
+        }
+
+        function handleGroupDragEnd(event) {
+            event.target.classList.remove('dragging-group');
+            document.querySelectorAll('.group-container').forEach(group => {
+                group.classList.remove('drag-over');
             });
         }
 
-        // 드래그 앤 드롭 기능
-        function dragStart(event) {
-            event.dataTransfer.setData('text/plain', event.target.dataset.card);
+        function handleGroupDragOver(event) {
+            event.preventDefault();
+            const dragType = event.dataTransfer.types.includes('text/drag-type');
+            if (!dragType) return;
+            
+            const targetGroup = event.target.closest('.group-container');
+            if (targetGroup && !targetGroup.classList.contains('dragging-group')) {
+                targetGroup.classList.add('drag-over');
+            }
+        }
+
+        function handleGroupDrop(event) {
+            event.preventDefault();
+            const dragType = event.dataTransfer.getData('text/drag-type');
+            
+            if (dragType === 'group') {
+                const draggedGroupId = event.dataTransfer.getData('text/group-id');
+                const targetGroup = event.target.closest('.group-container');
+                
+                if (targetGroup && targetGroup.dataset.groupId !== draggedGroupId) {
+                    const targetGroupId = targetGroup.dataset.groupId;
+                    reorderGroups(draggedGroupId, targetGroupId);
+                }
+                
+                targetGroup.classList.remove('drag-over');
+            } else {
+                const cardId = event.dataTransfer.getData('text/plain');
+                const targetGroup = event.target.closest('.group-container');
+                const targetGroupId = targetGroup.dataset.groupId;
+                moveCardToGroup(cardId, targetGroupId);
+                targetGroup.classList.remove('drag-over');
+            }
+        }
+
+        function reorderGroups(draggedGroupId, targetGroupId) {
+            const { groups } = appState.sortingData;
+            const draggedGroup = groups[draggedGroupId];
+            const targetGroup = groups[targetGroupId];
+            
+            if (!draggedGroup || !targetGroup) return;
+            
+            const draggedOrder = draggedGroup.order || 0;
+            const targetOrder = targetGroup.order || 0;
+            
+            draggedGroup.order = targetOrder;
+            targetGroup.order = draggedOrder;
+            
+            renderGroups();
+            autoSave();
+            
+            showNotification('✅ 그룹 순서가 변경되었습니다!', 'success');
+        }
+
+        function handleDragStart(event) {
+            if (!event.target.classList.contains('card-item')) return;
+            
+            const cardId = event.target.dataset.cardId;
+            event.dataTransfer.setData('text/plain', cardId);
+            event.dataTransfer.setData('text/drag-type', 'card');
             event.target.classList.add('dragging');
         }
 
-        function allowDrop(event) {
+        function handleDragEnd(event) {
+            event.target.classList.remove('dragging');
+            document.querySelectorAll('.group-container').forEach(group => {
+                group.classList.remove('drag-over');
+            });
+            document.querySelectorAll('.card-pool').forEach(pool => {
+                pool.classList.remove('drag-over');
+            });
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+        }
+
+        function handleDragEnter(event) {
+            const targetGroup = event.target.closest('.group-container');
+            if (targetGroup) {
+                targetGroup.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(event) {
+            const targetGroup = event.target.closest('.group-container');
+            if (targetGroup && !targetGroup.contains(event.relatedTarget)) {
+                targetGroup.classList.remove('drag-over');
+            }
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            
+            const dragType = event.dataTransfer.getData('text/drag-type');
+            
+            if (dragType === 'card') {
+                const cardId = event.dataTransfer.getData('text/plain');
+                const targetGroup = event.target.closest('.group-container');
+                const targetGroupId = targetGroup.dataset.groupId;
+                moveCardToGroup(cardId, targetGroupId);
+                targetGroup.classList.remove('drag-over');
+            }
+        }
+
+        function handleDragEnterPool(event) {
+            event.target.closest('.card-pool').classList.add('drag-over');
+        }
+
+        function handleDragLeavePool(event) {
+            if (!event.target.closest('.card-pool').contains(event.relatedTarget)) {
+                event.target.closest('.card-pool').classList.remove('drag-over');
+            }
+        }
+
+        function handleDropToPool(event) {
+            event.preventDefault();
+            const cardId = event.dataTransfer.getData('text/plain');
+            const cardPool = event.target.closest('.card-pool');
+            moveCardToPool(cardId);
+            cardPool.classList.remove('drag-over');
+        }
+
+        function moveCardToPool(cardId) {
+            const { groups, unassignedCards } = appState.sortingData;
+            let card = null;
+            
+            const alreadyUnassigned = unassignedCards.find(c => c.id === cardId);
+            if (alreadyUnassigned) return;
+            
+            for (const group of Object.values(groups)) {
+                const cardIndex = group.cards.findIndex(c => c.id === cardId);
+                if (cardIndex !== -1) {
+                    card = group.cards.splice(cardIndex, 1)[0];
+                    break;
+                }
+            }
+            
+            if (card) {
+                unassignedCards.push(card);
+                renderSortingUI();
+                updateProgress();
+                autoSave();
+            }
+        }
+
+        function moveCardToGroup(cardId, targetGroupId) {
+            const { groups, unassignedCards } = appState.sortingData;
+            let card = null;
+            
+            const unassignedIndex = unassignedCards.findIndex(c => c.id === cardId);
+            if (unassignedIndex !== -1) {
+                card = unassignedCards.splice(unassignedIndex, 1)[0];
+            } else {
+                for (const group of Object.values(groups)) {
+                    const cardIndex = group.cards.findIndex(c => c.id === cardId);
+                    if (cardIndex !== -1) {
+                        card = group.cards.splice(cardIndex, 1)[0];
+                        break;
+                    }
+                }
+            }
+            
+            if (card && groups[targetGroupId]) {
+                groups[targetGroupId].cards.push(card);
+                renderSortingUI();
+                updateProgress();
+                autoSave();
+            }
+        }
+
+        function createNewGroup() {
+            showModal('create-group-modal');
+            document.getElementById('new-group-name').focus();
+        }
+
+        function showSortingGuide() {
+            showModal('sorting-guide-modal');
+        }
+
+        function confirmCreateGroup() {
+            const groupName = document.getElementById('new-group-name').value.trim();
+            
+            if (!groupName) {
+                showNotification('그룹 이름을 입력해주세요.', 'warning');
+                return;
+            }
+            
+            if (groupName.length > 50) {
+                showNotification('그룹 이름은 50자 이내로 입력해주세요.', 'warning');
+                return;
+            }
+            
+            const existingNames = Object.values(appState.sortingData.groups).map(g => g.name);
+            if (existingNames.includes(groupName)) {
+                showNotification('이미 존재하는 그룹 이름입니다.', 'warning');
+                return;
+            }
+            
+            const maxOrder = Object.values(appState.sortingData.groups).reduce((max, group) => {
+                return Math.max(max, group.order || 0);
+            }, -1);
+            
+            const newGroupId = `custom-${generateId()}`;
+            appState.sortingData.groups[newGroupId] = {
+                id: newGroupId,
+                name: groupName,
+                originalName: groupName,
+                isCustom: true,
+                cards: [],
+                order: maxOrder + 1
+            };
+            
+            renderGroups();
+            closeModal('create-group-modal');
+            document.getElementById('new-group-name').value = '';
+            autoSave();
+        }
+
+        function editGroupName(groupId) {
+            const group = appState.sortingData.groups[groupId];
+            if (!group) return;
+            
+            const allowEdit = appState.currentProject.allowEditGroups;
+            if (!allowEdit && !group.isCustom) return;
+            
+            const newName = prompt('새 그룹 이름을 입력하세요:', group.name);
+            if (newName && newName.trim() && newName.trim() !== group.name) {
+                if (!group.isCustom && group.originalName !== newName.trim()) {
+                    if (!appState.sortingData.modifiedGroupNames.includes(group.originalName)) {
+                        appState.sortingData.modifiedGroupNames.push(group.originalName);
+                    }
+                }
+                
+                group.name = newName.trim();
+                renderGroups();
+                autoSave();
+            }
+        }
+
+        function deleteGroup(groupId) {
+            const group = appState.sortingData.groups[groupId];
+            if (!group || !group.isCustom) return;
+            
+            if (confirm(`'${group.name}' 그룹을 삭제하시겠습니까? 포함된 카드들은 미분류로 이동합니다.`)) {
+                appState.sortingData.unassignedCards.push(...group.cards);
+                delete appState.sortingData.groups[groupId];
+                renderSortingUI();
+                updateProgress();
+                autoSave();
+            }
+        }
+
+        function updateProgress() {
+            if (!appState.sortingData) return;
+            
+            const totalCards = appState.currentProject.cards.length;
+            const assignedCards = totalCards - appState.sortingData.unassignedCards.length;
+            const progress = Math.round((assignedCards / totalCards) * 100);
+            
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+            document.getElementById('progress-text').textContent = 
+                `${totalCards}개 중 ${assignedCards}개 카드 분류 완료 (${progress}%)`;
+            
+            const submitBtn = document.getElementById('submit-btn');
+            if (assignedCards === totalCards) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✅ 응답 제출하기';
+                submitBtn.style.opacity = '1';
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.textContent = `✅ 응답 제출하기 (${totalCards - assignedCards}개 미분류)`;
+                submitBtn.style.opacity = '0.8';
+            }
+        }
+
+        function autoSave() {
+            if (!appState.sortingData) return;
+            appState.sortingData.lastSaveTime = new Date().toISOString();
+            saveToStorage(`participant_${appState.sortingData.participantId}`, appState.sortingData);
+        }
+
+        function resetAllCards() {
+            if (!confirm('모든 카드를 미분류 상태로 초기화하시겠습니까?')) return;
+            
+            const { groups } = appState.sortingData;
+            Object.values(groups).forEach(group => {
+                appState.sortingData.unassignedCards.push(...group.cards);
+                group.cards = [];
+            });
+            
+            renderSortingUI();
+            updateProgress();
+            autoSave();
+        }
+
+        function submitSorting() {
+            if (!appState.sortingData) return;
+            
+            const unassignedCount = appState.sortingData.unassignedCards.length;
+            
+            if (unassignedCount > 0) {
+                alert(`아직 ${unassignedCount}개의 카드가 분류되지 않았습니다.\n모든 카드를 그룹으로 이동한 후 다시 시도해주세요.`);
+                return;
+            }
+            
+            appState.sortingData.sortingCompletedTime = new Date().toISOString();
+            appState.sortingData.sortingDuration = Math.floor((new Date() - appState.startTime) / 1000);
+            
+            autoSave();
+            showSurveyPage();
+        }
+
+        // ============================================
+        // 설문 응답하기 페이지 함수들
+        // ============================================
+
+        function showSurveyPage() {
+            showPage('survey-page');
+            
+            if (appState.sortingData.tempSurveyData) {
+                appState.surveyData = appState.sortingData.tempSurveyData;
+            } else {
+                appState.surveyData = {
+                    question1: [],
+                    question2: []
+                };
+            }
+            
+            setupSurveyDropZones();
+            renderSurveyCenterCards();
+            restoreSurveySelections();
+            updateSurveyProgressInfo();
+        }
+
+        function setupSurveyDropZones() {
+            const q1DropZone = document.getElementById('q1-drop-zone');
+            const q2DropZone = document.getElementById('q2-drop-zone');
+            
+            [q1DropZone, q2DropZone].forEach(zone => {
+                zone.addEventListener('dragover', handleSurveyDragOver);
+                zone.addEventListener('drop', handleSurveyDrop);
+                zone.addEventListener('dragenter', handleSurveyDragEnter);
+                zone.addEventListener('dragleave', handleSurveyDragLeave);
+            });
+        }
+
+        function renderSurveyCenterCards() {
+            const container = document.getElementById('survey-center-groups');
+            container.innerHTML = '';
+            
+            const { groups } = appState.sortingData;
+            const sortedGroups = Object.values(groups)
+                .filter(group => group.cards.length > 0)
+                .sort((a, b) => (a.order || 0) - (b.order || 0));
+            
+            // 3개씩 그룹을 묶어서 행 단위로 처리
+            for (let i = 0; i < sortedGroups.length; i += 3) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'survey-groups-grid';
+                
+                const rowGroups = sortedGroups.slice(i, i + 3);
+                rowGroups.forEach(group => {
+                    const groupBox = createSurveyGroupBox(group);
+                    rowDiv.appendChild(groupBox);
+                });
+                
+                container.appendChild(rowDiv);
+            }
+            
+            if (appState.sortingData.unassignedCards && appState.sortingData.unassignedCards.length > 0) {
+                const unassignedGroup = {
+                    name: '미분류',
+                    cards: appState.sortingData.unassignedCards,
+                    order: 999
+                };
+                
+                // 미분류 그룹을 위한 새로운 행 생성
+                const unassignedRowDiv = document.createElement('div');
+                unassignedRowDiv.className = 'survey-groups-grid';
+                
+                const unassignedBox = createSurveyGroupBox(unassignedGroup);
+                unassignedRowDiv.appendChild(unassignedBox);
+                
+                container.appendChild(unassignedRowDiv);
+            }
+        }
+
+        function createSurveyGroupBox(group) {
+            const groupBox = document.createElement('div');
+            groupBox.className = 'survey-group-box';
+            
+            const header = document.createElement('div');
+            header.className = 'survey-group-box-header';
+            header.onclick = () => toggleSurveyGroupBox(groupBox);
+            
+            const title = document.createElement('span');
+            title.textContent = `${group.name} (${group.cards.length}개)`;
+            
+            const toggle = document.createElement('span');
+            toggle.className = 'survey-group-toggle';
+            toggle.textContent = '▼';
+            
+            header.appendChild(title);
+            header.appendChild(toggle);
+            
+            const cardsContainer = document.createElement('div');
+            cardsContainer.className = 'survey-group-cards';
+            
+            group.cards.forEach(card => {
+                const isInQ1 = appState.surveyData.question1.some(c => c.id === card.id);
+                const isInQ2 = appState.surveyData.question2.some(c => c.id === card.id);
+                
+                if (!isInQ1 && !isInQ2) {
+                    const cardElement = createSurveyDraggableCard(card);
+                    cardsContainer.appendChild(cardElement);
+                }
+            });
+            
+            groupBox.appendChild(header);
+            groupBox.appendChild(cardsContainer);
+            
+            return groupBox;
+        }
+
+        function createSurveyDraggableCard(card) {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'survey-draggable-card';
+            cardDiv.textContent = card.content;
+            cardDiv.draggable = true;
+            cardDiv.dataset.cardId = card.id;
+            cardDiv.dataset.cardContent = card.content;
+            
+            cardDiv.addEventListener('dragstart', handleSurveyCardDragStart);
+            cardDiv.addEventListener('dragend', handleSurveyCardDragEnd);
+            
+            return cardDiv;
+        }
+
+        function createSurveyDroppedCard(card, questionNum) {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = `survey-dropped-card q${questionNum}`;
+            cardDiv.textContent = card.content;
+            cardDiv.draggable = true;
+            cardDiv.dataset.cardId = card.id;
+            cardDiv.dataset.cardContent = card.content;
+            cardDiv.dataset.questionNum = questionNum;
+            
+            const rankDiv = document.createElement('div');
+            rankDiv.className = `survey-card-rank q${questionNum}`;
+            cardDiv.appendChild(rankDiv);
+            
+            cardDiv.addEventListener('dragstart', handleSurveyDroppedCardDragStart);
+            cardDiv.addEventListener('dragend', handleSurveyCardDragEnd);
+            
+            return cardDiv;
+        }
+
+        function toggleSurveyGroupBox(groupBox) {
+            const cardsContainer = groupBox.querySelector('.survey-group-cards');
+            const toggle = groupBox.querySelector('.survey-group-toggle');
+            
+            if (cardsContainer.classList.contains('collapsed')) {
+                cardsContainer.classList.remove('collapsed');
+                toggle.classList.remove('collapsed');
+                toggle.textContent = '▼';
+            } else {
+                cardsContainer.classList.add('collapsed');
+                toggle.classList.add('collapsed');
+                toggle.textContent = '▶';
+            }
+        }
+
+        function handleSurveyCardDragStart(event) {
+            const cardId = event.target.dataset.cardId;
+            const cardContent = event.target.dataset.cardContent;
+            
+            event.dataTransfer.setData('text/card-id', cardId);
+            event.dataTransfer.setData('text/card-content', cardContent);
+            event.dataTransfer.setData('text/drag-source', 'center');
+            
+            event.target.classList.add('dragging');
+        }
+
+        function handleSurveyDroppedCardDragStart(event) {
+            const cardId = event.target.dataset.cardId;
+            const cardContent = event.target.dataset.cardContent;
+            const questionNum = event.target.dataset.questionNum;
+            
+            event.dataTransfer.setData('text/card-id', cardId);
+            event.dataTransfer.setData('text/card-content', cardContent);
+            event.dataTransfer.setData('text/drag-source', `question${questionNum}`);
+            
+            event.target.classList.add('dragging');
+        }
+
+        function handleSurveyCardDragEnd(event) {
+            event.target.classList.remove('dragging');
+            
+            document.querySelectorAll('.survey-drop-zone').forEach(zone => {
+                zone.classList.remove('drag-over');
+            });
+        }
+
+        function handleSurveyDragOver(event) {
+            event.preventDefault();
+        }
+
+        function handleSurveyDragEnter(event) {
             event.preventDefault();
             event.currentTarget.classList.add('drag-over');
         }
 
-        function dropCard(event) {
+        function handleSurveyDragLeave(event) {
+            if (!event.currentTarget.contains(event.relatedTarget)) {
+                event.currentTarget.classList.remove('drag-over');
+            }
+        }
+
+        function handleSurveyDrop(event) {
             event.preventDefault();
-            const card = event.dataTransfer.getData('text/plain');
-            const groupBox = event.currentTarget;
-            const groupName = groupBox.dataset.group;
+            event.currentTarget.classList.remove('drag-over');
             
-            groupBox.classList.remove('drag-over');
+            const cardId = event.dataTransfer.getData('text/card-id');
+            const cardContent = event.dataTransfer.getData('text/card-content');
+            const dragSource = event.dataTransfer.getData('text/drag-source');
             
-            // 카드를 그룹에 추가
-            if (!participantData.sortingResult[groupName]) {
-                participantData.sortingResult[groupName] = [];
+            const dropZone = event.currentTarget;
+            let targetQuestion = 0;
+            
+            if (dropZone.id === 'q1-drop-zone') {
+                targetQuestion = 1;
+            } else if (dropZone.id === 'q2-drop-zone') {
+                targetQuestion = 2;
             }
             
-            // 다른 그룹에서 카드 제거
-            Object.keys(participantData.sortingResult).forEach(group => {
-                participantData.sortingResult[group] = participantData.sortingResult[group].filter(c => c !== card);
-            });
+            if (targetQuestion === 0) return;
             
-            participantData.sortingResult[groupName].push(card);
+            const card = findCardById(cardId);
+            if (!card) return;
             
-            // UI 업데이트
-            updateGroupDisplay(groupName);
-            renderCardsGrid();
-            updateProgress();
+            removeCardFromSelections(cardId);
             
-            // 드래그 효과 제거
-            document.querySelectorAll('.card-item').forEach(cardEl => {
-                cardEl.classList.remove('dragging');
-            });
-        }
-
-        function updateGroupDisplay(groupName) {
-            const groupCardsContainer = document.getElementById(`group-${groupName.replace(/\s+/g, '-')}`);
-            if (groupCardsContainer) {
-                groupCardsContainer.innerHTML = '';
-                participantData.sortingResult[groupName].forEach(card => {
-                    groupCardsContainer.innerHTML += `
-                        <div class="card-item in-group" onclick="removeFromGroup('${card}', '${groupName}')">
-                            ${card}
-                        </div>
-                    `;
-                });
-            }
-        }
-
-        // 진행률 업데이트
-        function updateProgress() {
-            const totalCards = studyData.cards.length;
-            const assignedCards = Object.values(participantData.sortingResult).reduce((sum, groupCards) => sum + groupCards.length, 0);
-            const progress = Math.round((assignedCards / totalCards) * 100);
+            const targetArray = targetQuestion === 1 ? appState.surveyData.question1 : appState.surveyData.question2;
             
-            document.getElementById('progress-fill').style.width = progress + '%';
-            document.getElementById('progress-text').textContent = progress + '%';
-            document.getElementById('assigned-count').textContent = assignedCards;
-            document.getElementById('total-count').textContent = totalCards;
-        }
-
-        // 그룹에서 카드 제거
-        function removeFromGroup(card, groupName) {
-            participantData.sortingResult[groupName] = participantData.sortingResult[groupName].filter(c => c !== card);
-            updateGroupDisplay(groupName);
-            renderCardsGrid();
-            updateProgress();
-        }
-
-        // 새 그룹 추가 (오픈 소팅)
-        function addNewGroup() {
-            const groupName = prompt('새 그룹명을 입력하세요:');
-            if (groupName && groupName.trim()) {
-                const trimmedName = groupName.trim();
-                if (!Object.keys(participantData.sortingResult).includes(trimmedName)) {
-                    participantData.sortingResult[trimmedName] = [];
-                    studyData.groups.push(trimmedName);
-                    renderGroupsGrid();
-                    showToast('새 그룹이 추가되었습니다');
-                } else {
-                    showToast('이미 존재하는 그룹명입니다', 'error');
-                }
-            }
-        }
-
-        // 소팅 제출
-        function submitSorting() {
-            const assignedCards = Object.values(participantData.sortingResult).reduce((sum, groupCards) => sum + groupCards.length, 0);
-            
-            if (assignedCards === 0) {
-                showToast('최소 1개 이상의 카드를 분류해주세요', 'error');
+            if (targetArray.length >= 3) {
+                showNotification(`최대 3개까지만 선택할 수 있습니다.`, 'warning');
                 return;
             }
-
-            participantData.endTime = new Date().toISOString();
             
-            // 결과 요약
-            const totalCards = studyData.cards.length;
-            const usedGroups = Object.keys(participantData.sortingResult).filter(group => participantData.sortingResult[group].length > 0).length;
-            const unassignedCards = totalCards - assignedCards;
+            targetArray.push(card);
             
-            document.getElementById('final-summary').innerHTML = `
-                <p><strong>총 카드 수:</strong> ${totalCards}개</p>
-                <p><strong>분류 완료:</strong> ${assignedCards}개</p>
-                <p><strong>사용된 그룹:</strong> ${usedGroups}개</p>
-                <p><strong>미분류 카드:</strong> ${unassignedCards}개</p>
-            `;
-            
-            document.getElementById('completion-modal').classList.add('show');
+            updateSurveyDropZones();
+            renderSurveyCenterCards();
+            updateSurveyProgressInfo();
         }
 
-        // 소팅 리셋
-        function resetSorting() {
-            if (confirm('현재 분류를 초기화하시겠습니까?')) {
-                participantData.sortingResult = {};
-                studyData.groups.forEach(group => {
-                    participantData.sortingResult[group] = [];
+        function findCardById(cardId) {
+            const { groups, unassignedCards } = appState.sortingData;
+            
+            for (const group of Object.values(groups)) {
+                const card = group.cards.find(c => c.id === cardId);
+                if (card) return card;
+            }
+            
+            if (unassignedCards) {
+                const card = unassignedCards.find(c => c.id === cardId);
+                if (card) return card;
+            }
+            
+            return null;
+        }
+
+        function removeCardFromSelections(cardId) {
+            const q1Index = appState.surveyData.question1.findIndex(c => c.id === cardId);
+            if (q1Index !== -1) {
+                appState.surveyData.question1.splice(q1Index, 1);
+            }
+            
+            const q2Index = appState.surveyData.question2.findIndex(c => c.id === cardId);
+            if (q2Index !== -1) {
+                appState.surveyData.question2.splice(q2Index, 1);
+            }
+        }
+
+        function updateSurveyDropZones() {
+            const q1Container = document.getElementById('q1-cards');
+            q1Container.innerHTML = '';
+            
+            if (appState.surveyData.question1.length === 0) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'drop-zone-empty';
+                emptyDiv.textContent = '카드를 여기에 드래그하세요';
+                q1Container.appendChild(emptyDiv);
+            } else {
+                appState.surveyData.question1.forEach((card, index) => {
+                    const cardElement = createSurveyDroppedCard(card, 1);
+                    const rankDiv = cardElement.querySelector('.survey-card-rank');
+                    rankDiv.textContent = index + 1;
+                    q1Container.appendChild(cardElement);
                 });
-                renderSortingInterface();
-                updateProgress();
-                showToast('분류가 초기화되었습니다');
             }
-        }
-
-        // 전체 리셋
-        function resetAll() {
-            if (confirm('모든 설정을 초기화하시겠습니까?')) {
-                studyData.cards = [];
-                studyData.groups = [];
-                renderResearcherMode();
-                document.getElementById('url-generator').style.display = 'none';
-                showToast('모든 설정이 초기화되었습니다');
-            }
-        }
-
-        // 결과 다운로드
-        function downloadResult() {
-            const resultData = {
-                participant_id: participantData.name,
-                study_title: studyData.title,
-                start_time: participantData.startTime,
-                end_time: participantData.endTime,
-                duration_minutes: Math.round((new Date(participantData.endTime) - new Date(participantData.startTime)) / 60000),
-                groups: []
-            };
             
-            Object.keys(participantData.sortingResult).forEach(groupName => {
-                if (participantData.sortingResult[groupName].length > 0) {
-                    resultData.groups.push({
-                        group_name: groupName,
-                        cards: [...participantData.sortingResult[groupName]]
+            const q2Container = document.getElementById('q2-cards');
+            q2Container.innerHTML = '';
+            
+            if (appState.surveyData.question2.length === 0) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'drop-zone-empty';
+                emptyDiv.textContent = '카드를 여기에 드래그하세요';
+                q2Container.appendChild(emptyDiv);
+            } else {
+                appState.surveyData.question2.forEach((card, index) => {
+                    const cardElement = createSurveyDroppedCard(card, 2);
+                    const rankDiv = cardElement.querySelector('.survey-card-rank');
+                    rankDiv.textContent = index + 1;
+                    q2Container.appendChild(cardElement);
+                });
+            }
+        }
+
+        function updateSurveyProgressInfo() {
+            const q1Progress = document.getElementById('q1-progress-display');
+            const q2Progress = document.getElementById('q2-progress-display');
+            
+            const q1Count = appState.surveyData.question1.length;
+            const q2Count = appState.surveyData.question2.length;
+            
+            q1Progress.textContent = `${q1Count}/3개`;
+            q2Progress.textContent = `${q2Count}/3개`;
+            
+            const q1DropZone = document.getElementById('q1-drop-zone');
+            const q2DropZone = document.getElementById('q2-drop-zone');
+            
+            if (q1Count === 3) {
+                q1DropZone.querySelector('.drop-zone-header').style.background = '#e8f5e9';
+                q1DropZone.querySelector('.drop-zone-header').style.borderColor = '#4caf50';
+                q1DropZone.querySelector('.drop-zone-header').style.color = '#388e3c';
+            } else {
+                q1DropZone.querySelector('.drop-zone-header').style.background = '#e3f2fd';
+                q1DropZone.querySelector('.drop-zone-header').style.borderColor = '#2196f3';
+                q1DropZone.querySelector('.drop-zone-header').style.color = '#1976d2';
+            }
+            
+            if (q2Count === 3) {
+                q2DropZone.querySelector('.drop-zone-header').style.background = '#e8f5e9';
+                q2DropZone.querySelector('.drop-zone-header').style.borderColor = '#4caf50';
+                q2DropZone.querySelector('.drop-zone-header').style.color = '#388e3c';
+            } else {
+                q2DropZone.querySelector('.drop-zone-header').style.background = '#ffebee';
+                q2DropZone.querySelector('.drop-zone-header').style.borderColor = '#f44336';
+                q2DropZone.querySelector('.drop-zone-header').style.color = '#d32f2f';
+            }
+            
+            const submitBtn = document.getElementById('survey-submit-btn');
+            submitBtn.disabled = false;
+        }
+
+        function restoreSurveySelections() {
+            updateSurveyDropZones();
+        }
+
+        function returnToSorting() {
+            if (appState.surveyData) {
+                appState.sortingData.tempSurveyData = appState.surveyData;
+                autoSave();
+            }
+            
+            showPage('sorting-page');
+            renderSortingUI();
+            updateProgress();
+        }
+
+        async function submitSurvey() {
+            if (!appState.sortingData || !appState.surveyData) return;
+            
+            const q1Count = appState.surveyData.question1.length;
+            const q2Count = appState.surveyData.question2.length;
+            
+            if (q1Count !== 3 || q2Count !== 3) {
+                let message = '선택을 완료해주세요:\n';
+                if (q1Count !== 3) {
+                    message += `• 가장 많이 사용하는 혜택: ${q1Count}/3개 선택됨\n`;
+                }
+                if (q2Count !== 3) {
+                    message += `• 가장 적게 사용하는 혜택: ${q2Count}/3개 선택됨`;
+                }
+                
+                alert(message);
+                return;
+            }
+            
+            appState.sortingData.surveyData = appState.surveyData;
+            delete appState.sortingData.tempSurveyData;
+            
+            autoSave();
+            showFeedbackPage();
+        }
+
+        // ============================================
+        // 의견 수집 페이지 함수들
+        // ============================================
+
+        function showFeedbackPage() {
+            showPage('feedback-page');
+            
+            displaySortingResults();
+            
+            if (appState.sortingData.tempFeedback) {
+                document.getElementById('participant-feedback').value = appState.sortingData.tempFeedback;
+                updateCharCount();
+            }
+        }
+
+        function displaySortingResults() {
+            const container = document.getElementById('sorting-result-display');
+            const { groups } = appState.sortingData;
+            container.innerHTML = '';
+            
+            const sortedGroups = Object.values(groups)
+                .filter(group => group.cards.length > 0)
+                .sort((a, b) => (a.order || 0) - (b.order || 0));
+            
+            sortedGroups.forEach((group, index) => {
+                const resultGroup = document.createElement('div');
+                resultGroup.className = 'result-group';
+                
+                const header = document.createElement('div');
+                header.className = 'result-group-header';
+                header.textContent = `그룹${index + 1}: ${group.name} (${group.cards.length}개)`;
+                
+                const cardsContainer = document.createElement('div');
+                cardsContainer.className = 'result-group-cards';
+                
+                group.cards.forEach(card => {
+                    const cardElement = document.createElement('div');
+                    cardElement.className = 'result-card';
+                    cardElement.textContent = card.content;
+                    cardsContainer.appendChild(cardElement);
+                });
+                
+                resultGroup.appendChild(header);
+                resultGroup.appendChild(cardsContainer);
+                container.appendChild(resultGroup);
+            });
+            
+            if (appState.sortingData.unassignedCards && appState.sortingData.unassignedCards.length > 0) {
+                const unassignedGroup = document.createElement('div');
+                unassignedGroup.className = 'result-group';
+                
+                const header = document.createElement('div');
+                header.className = 'result-group-header';
+                header.style.background = '#6c757d';
+                header.textContent = `미분류 (${appState.sortingData.unassignedCards.length}개)`;
+                
+                const cardsContainer = document.createElement('div');
+                cardsContainer.className = 'result-group-cards';
+                
+                appState.sortingData.unassignedCards.forEach(card => {
+                    const cardElement = document.createElement('div');
+                    cardElement.className = 'result-card';
+                    cardElement.style.borderColor = '#6c757d';
+                    cardElement.textContent = card.content;
+                    cardsContainer.appendChild(cardElement);
+                });
+                
+                unassignedGroup.appendChild(header);
+                unassignedGroup.appendChild(cardsContainer);
+                container.appendChild(unassignedGroup);
+            }
+        }
+
+        function updateCharCount() {
+            const textarea = document.getElementById('participant-feedback');
+            const counter = document.getElementById('char-counter');
+            const currentLength = textarea.value.length;
+            const maxLength = 2000;
+            
+            counter.textContent = `${currentLength} / ${maxLength}자`;
+            
+            if (currentLength > maxLength * 0.9) {
+                counter.className = 'char-counter danger';
+            } else if (currentLength > maxLength * 0.7) {
+                counter.className = 'char-counter warning';
+            } else {
+                counter.className = 'char-counter';
+            }
+        }
+
+        function returnToSurvey() {
+            const feedback = document.getElementById('participant-feedback').value.trim();
+            if (feedback) {
+                appState.sortingData.tempFeedback = feedback;
+                autoSave();
+            }
+            
+            showSurveyPage();
+        }
+
+        async function submitFeedback() {
+            if (!appState.sortingData || !appState.surveyData) return;
+            
+            try {
+                const feedback = document.getElementById('participant-feedback').value.trim();
+                
+                appState.sortingData.isCompleted = true;
+                appState.sortingData.completedTime = new Date().toISOString();
+                appState.sortingData.duration = Math.floor((new Date() - appState.startTime) / 1000);
+                appState.sortingData.surveyData = appState.surveyData;
+                appState.sortingData.participantFeedback = feedback;
+                
+                delete appState.sortingData.tempSurveyData;
+                delete appState.sortingData.tempFeedback;
+                
+                saveToStorage(`participant_${appState.sortingData.participantId}`, appState.sortingData);
+                
+                try {
+                    await saveToGoogleSheets(appState.sortingData, appState.currentProject);
+                } catch (error) {
+                    console.warn('Google Sheets 저장 실패, 로컬 저장은 완료됨:', error);
+                    showNotification('⚠️ Google Sheets 저장 실패. 로컬 저장은 완료되었습니다.', 'warning');
+                }
+                
+                showCompletionPage();
+                
+            } catch (error) {
+                console.error('제출 중 오류:', error);
+                showNotification('제출 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
+            }
+        }
+
+        function showCompletionPage() {
+            showPage('completion-page');
+        }
+
+        // ============================================
+        // 데이터 포맷팅 및 내보내기 함수들
+        // ============================================
+
+        function formatResponseForExport(responseData, projectConfig) {
+            const groupResults = {};
+            const cardDistribution = {};
+            const groupOrder = [];
+            
+            const sortedGroups = Object.values(responseData.groups || {}).sort((a, b) => (a.order || 0) - (b.order || 0));
+            
+            sortedGroups.forEach(group => {
+                if (group.cards.length > 0) {
+                    groupResults[group.name] = group.cards.map(card => card.content);
+                    groupOrder.push(group.name);
+                    group.cards.forEach(card => {
+                        cardDistribution[card.content] = group.name;
                     });
                 }
             });
             
-            const blob = new Blob([JSON.stringify(resultData, null, 2)], { type: 'application/json' });
+            if (responseData.unassignedCards && responseData.unassignedCards.length > 0) {
+                groupResults['미분류'] = responseData.unassignedCards.map(card => card.content);
+                responseData.unassignedCards.forEach(card => {
+                    cardDistribution[card.content] = '미분류';
+                });
+            }
+            
+            const customGroupsCount = Object.values(responseData.groups || {}).filter(g => g.isCustom && g.cards.length > 0).length;
+            const usedGroupsCount = Object.keys(groupResults).length;
+            
+            const surveyResults = responseData.surveyData ? {
+                mostUsed: responseData.surveyData.question1.map((card, index) => ({
+                    rank: index + 1,
+                    card: card.content,
+                    group: cardDistribution[card.content] || '미분류'
+                })),
+                leastUsed: responseData.surveyData.question2.map((card, index) => ({
+                    rank: index + 1,
+                    card: card.content,
+                    group: cardDistribution[card.content] || '미분류'
+                }))
+            } : null;
+            
+            return {
+                이름: responseData.name || '알 수 없음',
+                휴대폰뒷번호4자리: responseData.phone || '',
+                시작시간: responseData.startTime,
+                완료시간: responseData.completedTime,
+                소요시간: Math.round(responseData.duration / 60) + '분',
+                소팅방식: responseData.sortingType,
+                참여자가추가한그룹수: customGroupsCount,
+                참여자가분류한그룹수: usedGroupsCount,
+                그룹별결과: JSON.stringify(groupResults),
+                그룹순서: groupOrder.join(' > '),
+                가장많이사용하는혜택: responseData.surveyData ? responseData.surveyData.question1.map(c => c.content).join(', ') : '',
+                가장적게사용하는혜택: responseData.surveyData ? responseData.surveyData.question2.map(c => c.content).join(', ') : '',
+                참여자의견: responseData.participantFeedback || '',
+                
+                participantInfo: {
+                    name: responseData.name || '알 수 없음',
+                    phone: responseData.phone || '',
+                    participantId: responseData.participantId
+                },
+                timeInfo: {
+                    startTime: responseData.startTime,
+                    completedTime: responseData.completedTime,
+                    lastSaveTime: responseData.lastSaveTime,
+                    durationSeconds: responseData.duration,
+                    durationMinutes: Math.round(responseData.duration / 60)
+                },
+                sortingResults: {
+                    sortingType: responseData.sortingType,
+                    totalCards: projectConfig.cards.length,
+                    assignedCards: projectConfig.cards.length - (responseData.unassignedCards?.length || 0),
+                    totalGroups: Object.keys(groupResults).length,
+                    customGroupsCreated: customGroupsCount,
+                    groupResults: groupResults,
+                    groupOrder: groupOrder,
+                    cardDistribution: cardDistribution,
+                    modifiedGroupNames: responseData.modifiedGroupNames || []
+                },
+                surveyResults: surveyResults,
+                participantFeedback: responseData.participantFeedback || '',
+                customGroups: Object.values(responseData.groups || {}).filter(g => g.isCustom && g.cards.length > 0).map(group => ({
+                    name: group.name,
+                    cardCount: group.cards.length,
+                    cards: group.cards.map(card => card.content),
+                    order: group.order || 0
+                })),
+                projectInfo: {
+                    projectId: projectConfig.id,
+                    projectTitle: projectConfig.title,
+                    totalAvailableCards: projectConfig.cards.length,
+                    predefinedGroups: projectConfig.predefinedGroups || [],
+                    sortingType: projectConfig.sortingType
+                },
+                technicalInfo: {
+                    isCompleted: responseData.isCompleted || false,
+                    dataVersion: '4.0',
+                    exportedAt: new Date().toISOString()
+                }
+            };
+        }
+
+        function downloadJSON(data, filename) {
+            const jsonString = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `card_sorting_${participantData.name}_${Date.now()}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.style.display = 'none';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
             URL.revokeObjectURL(url);
-            showToast('결과 파일이 다운로드되었습니다');
         }
 
-        // 이메일 전송 (시뮬레이션)
-        function emailResult() {
-            const resultData = {
-                participant_id: participantData.name,
-                study_title: studyData.title,
-                groups: []
-            };
+        // ============================================
+        // 이벤트 리스너 및 초기화
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('sorting-type').addEventListener('change', updateSortingTypeVisibility);
+            document.getElementById('card-list').addEventListener('input', updateCardCount);
             
-            Object.keys(participantData.sortingResult).forEach(groupName => {
-                if (participantData.sortingResult[groupName].length > 0) {
-                    resultData.groups.push({
-                        group_name: groupName,
-                        cards: [...participantData.sortingResult[groupName]]
-                    });
+            document.getElementById('new-card').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addNewCard();
                 }
             });
-
-            const emailBody = `카드 소팅 결과\n\n참여자: ${participantData.name}\n연구: ${studyData.title}\n\n결과:\n${JSON.stringify(resultData, null, 2)}`;
-            const mailtoLink = `mailto:researcher@example.com?subject=카드소팅 결과 - ${participantData.name}&body=${encodeURIComponent(emailBody)}`;
             
-            window.location.href = mailtoLink;
-            showToast('이메일 클라이언트가 열렸습니다');
-        }
-
-        // 모달 닫기
-        function closeModal() {
-            document.getElementById('completion-modal').classList.remove('show');
-        }
-
-        // 토스트 메시지
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => toast.classList.add('show'), 100);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => document.body.removeChild(toast), 300);
-            }, 3000);
-        }
-
-        // Enter 키 이벤트
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('card-input').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') addCard();
+            document.getElementById('new-group-name').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    confirmCreateGroup();
+                }
             });
             
-            document.getElementById('group-input').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') addGroup();
+            document.getElementById('participant-phone').addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
             });
-
-            document.getElementById('base-url').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') updateBaseURL();
-            });
-
-            document.getElementById('participant-name').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') startSorting();
-            });
-        });
-
-        // 페이지 로드 시 초기화
-        window.onload = function() {
-            init();
             
-            // URL에 연구 데이터가 있으면 참여자 모드로 전환
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('study')) {
-                switchMode('participant');
+            const nameInput = document.getElementById('participant-name');
+            let nameInputTimer;
+            
+            nameInput.addEventListener('input', function(e) {
+                clearTimeout(nameInputTimer);
+                nameInputTimer = setTimeout(() => {
+                    const value = e.target.value;
+                    const filteredValue = value.replace(/[^가-힣\s]/g, '');
+                    if (value !== filteredValue) {
+                        e.target.value = filteredValue;
+                    }
+                }, 100);
+            });
+            
+            nameInput.addEventListener('compositionend', function(e) {
+                e.target.value = e.target.value.replace(/[^가-힣\s]/g, '');
+            });
+            
+            const feedbackTextarea = document.getElementById('participant-feedback');
+            if (feedbackTextarea) {
+                feedbackTextarea.addEventListener('input', updateCharCount);
+                
+                feedbackTextarea.addEventListener('paste', function(e) {
+                    setTimeout(() => {
+                        const maxLength = 2000;
+                        if (e.target.value.length > maxLength) {
+                            e.target.value = e.target.value.substring(0, maxLength);
+                            updateCharCount();
+                            showNotification('최대 2000자까지 입력할 수 있습니다.', 'warning');
+                        }
+                    }, 0);
+                });
             }
-        };
+            
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('show');
+                    }
+                });
+            });
+            
+            function handleURLParams() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const mode = urlParams.get('mode');
+                
+                switch (mode) {
+                    case 'admin':
+                        showAdminLogin();
+                        break;
+                    case 'participant':
+                        showWelcomePage();
+                        break;
+                    default:
+                        showWelcomePage();
+                        break;
+                }
+            }
+            
+            handleURLParams();
+            
+            window.addEventListener('popstate', handleURLParams);
+            
+            window.addEventListener('beforeunload', function(e) {
+                if (appState.sortingData && !appState.sortingData.isCompleted) {
+                    e.preventDefault();
+                    e.returnValue = '진행 중인 카드소팅이 있습니다. 정말 페이지를 떠나시겠습니까?';
+                }
+            });
+            
+            updateSortingTypeVisibility();
+            updateCardCount();
+
+            console.log('✅ 롯데홈쇼핑 혜택 매장 카드 분류하기 툴 v4.2가 준비되었습니다.');
+            console.log('🎯 새로운 기능: UI 개선, Google Sheets 연동 강화');
+            console.log('🔄 설문 방식: 3x3 그룹 박스 레이아웃 + 드래그 앤 드롭');
+            console.log('🔧 UX 개선: 미분류 카드 영역 확대, 그룹 메타정보 색상 개선');
+            console.log('✨ 완성도 향상: 구글 시트 연동 CORS 우회 완료');
+        });
     </script>
 </body>
 </html>
