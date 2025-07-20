@@ -562,10 +562,10 @@
             line-height: 1.6;
         }
         
-        /* 3열 드래그 앤 드롭 레이아웃 - 높이 증가 */
+        /* 3열 드래그 앤 드롭 레이아웃 - 가운데 영역 확대 */
         .survey-drag-layout {
             display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
+            grid-template-columns: 1fr 2.6fr 1fr;
             gap: 20px;
             min-height: 600px;
             margin-bottom: 30px;
@@ -684,38 +684,17 @@
             color: #f44336;
         }
         
-        /* 가운데 카드 영역 - 그룹 박스 모양으로 수정 */
+        /* 가운데 카드 영역 - 헤더 제거하고 더 넓게 */
         .survey-cards-center {
             background: #f8f9fa;
             border-radius: 12px;
-            padding: 20px;
+            padding: 25px;
             border: 1px solid #dee2e6;
             max-height: 600px;
             overflow-y: auto;
         }
         
-        .survey-center-header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #dee2e6;
-        }
-        
-        .survey-center-header h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-        
-        .survey-center-header p {
-            color: #666;
-            font-size: 14px;
-            margin: 0;
-        }
-        
-        /* 그룹 박스들을 3개씩 한 행에 배치 */
+        /* 그룹 박스들을 3개씩 한 행에 배치 - 더 크고 넓게 */
         .survey-groups-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -733,18 +712,18 @@
         }
         
         .survey-group-box:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
         
         .survey-group-box-header {
             background: #667eea;
             color: white;
-            padding: 8px 12px;
-            margin: -15px -15px 15px -15px;
-            border-radius: 6px 6px 0 0;
+            padding: 12px 15px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 10px 10px 0 0;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 15px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
@@ -752,7 +731,7 @@
         }
         
         .survey-group-toggle {
-            font-size: 16px;
+            font-size: 18px;
             transition: transform 0.3s;
         }
         
@@ -762,7 +741,7 @@
         
         .survey-group-cards {
             display: block;
-            max-height: 200px;
+            max-height: 220px;
             overflow-y: auto;
         }
         
@@ -773,19 +752,20 @@
         .survey-draggable-card {
             background: #f8f9fa;
             border: 1px solid #dee2e6;
-            border-radius: 6px;
-            padding: 8px 12px;
-            margin-bottom: 6px;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 8px;
             cursor: move;
             position: relative;
             transition: all 0.2s;
-            font-size: 13px;
+            font-size: 14px;
+            line-height: 1.4;
             user-select: none;
         }
         
         .survey-draggable-card:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             background: white;
         }
         
@@ -1100,9 +1080,11 @@
                                 id="predefined-groups" 
                                 class="form-control textarea" 
                                 placeholder="한 줄에 하나씩 입력하세요"
-                            >구매혜택
-참여혜택
-카드/결제혜택</textarea>
+                            >구매(적립/사은)
+결제할인(카드/무이자)
+참여/보상
+나만의 혜택 알림				    
+멤버십/체험단</textarea>
                         </div>
 
                         <div class="checkbox-group">
@@ -1431,7 +1413,7 @@
                         <!-- 좌측: 가장 많이 사용 -->
                         <div class="survey-drop-zone drop-zone-left" id="q1-drop-zone">
                             <div class="drop-zone-header">
-                                🔵 가장 많이 사용하는 혜택<br>
+                                🔵 가장 많이 사용해요!<br>
                                 <span id="q1-progress-display">0/3개</span>
                             </div>
                             <div class="drop-zone-content" id="q1-cards">
@@ -1439,12 +1421,8 @@
                             </div>
                         </div>
 
-                        <!-- 가운데: 분류된 카드들 -->
+                        <!-- 가운데: 분류된 카드들 (헤더 제거됨) -->
                         <div class="survey-cards-center">
-                            <div class="survey-center-header">
-                                <h3>분류하신 카드들</h3>
-                                <p>카드를 좌우로 드래그해서 선택해주세요</p>
-                            </div>
                             <div id="survey-center-groups" class="survey-groups-grid">
                                 <!-- 그룹별 카드들이 여기에 표시됩니다 -->
                             </div>
@@ -1453,7 +1431,7 @@
                         <!-- 우측: 가장 적게 사용 -->
                         <div class="survey-drop-zone drop-zone-right" id="q2-drop-zone">
                             <div class="drop-zone-header">
-                                🔴 가장 적게 사용하는 혜택<br>
+                                🔴 가장 적게 사용해요..<br>
                                 <span id="q2-progress-display">0/3개</span>
                             </div>
                             <div class="drop-zone-content" id="q2-cards">
@@ -1645,7 +1623,7 @@
                 '마케팅 정보 이용 동의하고 5천원 쿠폰 받기'
             ],
             sortingType: 'hybrid',
-            predefinedGroups: ['구매혜택', '참여혜택', '카드/결제혜택'],
+            predefinedGroups: ['구매(적립/사은)', '결제할인(카드/무이자)', '멤버십/체험단', '참여/보상', '나만의 혜택 알림'],
             shuffleCards: true,
             allowEditGroups: true,
             createdAt: new Date().toISOString()
@@ -2816,18 +2794,12 @@
                 .sort((a, b) => (a.order || 0) - (b.order || 0));
             
             // 3개씩 그룹을 묶어서 행 단위로 처리
-            for (let i = 0; i < sortedGroups.length; i += 3) {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = 'survey-groups-grid';
-                
-                const rowGroups = sortedGroups.slice(i, i + 3);
-                rowGroups.forEach(group => {
-                    const groupBox = createSurveyGroupBox(group);
-                    rowDiv.appendChild(groupBox);
+            sortedGroups.forEach(group => {
+                const groupBox = createSurveyGroupBox(group);
+                container.appendChild(groupBox);
                 });
                 
-                container.appendChild(rowDiv);
-            }
+              
             
             if (appState.sortingData.unassignedCards && appState.sortingData.unassignedCards.length > 0) {
                 const unassignedGroup = {
