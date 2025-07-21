@@ -3223,7 +3223,7 @@ console.log('📏 전송 데이터 크기:', JSON.stringify(minimalData).length,
             const textarea = document.getElementById('participant-feedback');
             const counter = document.getElementById('char-counter');
             const currentLength = textarea.value.length;
-            const maxLength = 500;
+            const maxLength = 100;
             
             counter.textContent = `${currentLength} / ${maxLength}자`;
             
@@ -3269,7 +3269,7 @@ console.log('📏 전송 데이터 크기:', JSON.stringify(minimalData).length,
 		} catch (error) {
     		    console.warn('Google Sheets 응답 오류, 하지만 저장은 완료될 수 있습니다:', error);
    	            // 실제로 데이터가 저장되고 있으므로 성공으로 처리
-    		showNotification('✅ 제출이 완료되었습니다!', 'success');
+    		showNotification('✅ 제출이 완료되었습니다! (응답 확인 중 일부 오류 발생)', 'success');
 		}
 
 		// 어떤 경우든 완료 페이지로 이동
@@ -3466,7 +3466,7 @@ console.log('📏 전송 데이터 크기:', JSON.stringify(minimalData).length,
                         if (e.target.value.length > maxLength) {
                             e.target.value = e.target.value.substring(0, maxLength);
                             updateCharCount();
-                            showNotification('최대 100자까지 입력할 수 있습니다.', 'warning');
+                            showNotification('최대 500자까지 입력할 수 있습니다.', 'warning');
                         }
                     }, 0);
                 });
