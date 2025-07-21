@@ -252,8 +252,6 @@
         
         /* 카드 목록 높이 증가 */
         .card-list { 
-            max-height: 800px; 
-            overflow-y: auto; 
             margin-bottom: 15px; 
         }
         
@@ -318,8 +316,6 @@
             display: grid; 
             grid-template-columns: repeat(3, 1fr);
             gap: 20px; 
-            max-height: 70vh; 
-            overflow-y: auto; 
             padding: 20px; 
         }
         
@@ -683,7 +679,29 @@
             border-color: #f44336;
             color: #f44336;
         }
-        
+	    
+        .survey-card-remove-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #dc3545;
+            color: white;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .survey-card-remove-btn:hover {
+            background: #c82333;
+        }
+	    
         /* 가운데 카드 영역 - 헤더 제거하고 더 넓게 */
         .survey-cards-center {
             background: #f8f9fa;
@@ -1477,10 +1495,10 @@
                                 id="participant-feedback" 
                                 class="form-control feedback-textarea" 
                                 placeholder="&#10;무엇을 작성해야할지 모르겠다면 다음 내용들을 참고해주셔도 좋아요 : D&#10;-'카드 분류하기'라는 과정을 참여하면서 느낀 점!&#10;-카드를 분류할 때, 중요하게 신경썼던 점 혹은 어려웠던 점!&#10;-카드의 그룹명을 수정하거나 추가하셨다면, 그 이유!"
-                                maxlength="2000"
+                                maxlength="500"
                                 oninput="updateCharCount()"
                             ></textarea>
-                            <div class="char-counter" id="char-counter">0 / 2000자</div>
+                            <div class="char-counter" id="char-counter">0 / 500자</div>
                         </div>
                     </div>
 
@@ -2880,7 +2898,17 @@ console.log('📏 전송 데이터 크기:', JSON.stringify(minimalData).length,
             const rankDiv = document.createElement('div');
             rankDiv.className = `survey-card-rank q${questionNum}`;
             cardDiv.appendChild(rankDiv);
-            
+
+            // X 버튼 추가
+	    const removeBtn = document.createElement('button');
+	    removeBtn.className = 'survey-card-remove-btn';
+            removeBtn.innerHTML = '×';
+            removeBtn.onclick = (e) => {
+    		e.stopPropagation();
+    		removeSurveyCard(card.id);
+	    };
+	    cardDiv.appendChild(removeBtn);
+		
             cardDiv.addEventListener('dragstart', handleSurveyDroppedCardDragStart);
             cardDiv.addEventListener('dragend', handleSurveyCardDragEnd);
             
@@ -3012,6 +3040,12 @@ console.log('📏 전송 데이터 크기:', JSON.stringify(minimalData).length,
             if (q2Index !== -1) {
                 appState.surveyData.question2.splice(q2Index, 1);
             }
+        }
+	    function removeSurveyCard(cardId) {
+            removeCardFromSelections(cardId);
+            updateSurveyDropZones();
+            renderSurveyCenterCards();
+            updateSurveyProgressInfo();
         }
 
         function updateSurveyDropZones() {
@@ -3205,7 +3239,7 @@ console.log('📏 전송 데이터 크기:', JSON.stringify(minimalData).length,
             const textarea = document.getElementById('participant-feedback');
             const counter = document.getElementById('char-counter');
             const currentLength = textarea.value.length;
-            const maxLength = 2000;
+            const maxLength = 500;
             
             counter.textContent = `${currentLength} / ${maxLength}자`;
             
@@ -3441,11 +3475,11 @@ console.log('📏 전송 데이터 크기:', JSON.stringify(minimalData).length,
                 
                 feedbackTextarea.addEventListener('paste', function(e) {
                     setTimeout(() => {
-                        const maxLength = 2000;
+                        const maxLength = 500;
                         if (e.target.value.length > maxLength) {
                             e.target.value = e.target.value.substring(0, maxLength);
                             updateCharCount();
-                            showNotification('최대 2000자까지 입력할 수 있습니다.', 'warning');
+                            showNotification('최대 500자까지 입력할 수 있습니다.', 'warning');
                         }
                     }, 0);
                 });
