@@ -3393,6 +3393,13 @@
         // ============================================
         
         document.addEventListener('DOMContentLoaded', function() {
+		const config = loadFromStorage('google_sheets_config');
+    		if (config) {
+        	GOOGLE_APPS_SCRIPT_URL = config.webappUrl || '';
+        	SPREADSHEET_ID = config.spreadsheetId || '';
+        	console.log('✅ Google Sheets 설정 자동 로드됨');
+    		}
+
             document.getElementById('sorting-type').addEventListener('change', updateSortingTypeVisibility);
             document.getElementById('card-list').addEventListener('input', updateCardCount);
             
