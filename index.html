@@ -1677,28 +1677,26 @@
                     if (dataString.length > 8000) {
                         // 데이터가 너무 큰 경우 핵심 정보만 전송
                         const minimalData = {
-                            이름: exportData.이름,
-                            휴대폰뒷번호4자리: exportData.휴대폰뒷번호4자리,
-                            완료시간: exportData.완료시간,
-                            소요시간: exportData.소요시간,
-                            그룹별결과: exportData.그룹별결과,
-                            가장많이사용하는혜택: exportData.가장많이사용하는혜택,
-                            가장적게사용하는혜택: exportData.가장적게사용하는혜택,
-                            참여자의견: exportData.참여자의견
-                        };
-                        params = new URLSearchParams({
-                            action: 'save',
-                            data: JSON.stringify(minimalData),
-                            callback: callbackName
-                        });
-                        console.log('⚠️ 데이터 크기 초과로 핵심 정보만 전송');
-                    } else {
-                        params = new URLSearchParams({
-                            action: 'save',
-                            data: dataString,
-                            callback: callbackName
-                        });
-                    }
+   			 이름: exportData.이름,
+   			 휴대폰뒷번호4자리: exportData.휴대폰뒷번호4자리,
+   			 완료시간: exportData.완료시간,
+ 			 소요시간: exportData.소요시간,
+  			 소팅방식: exportData.소팅방식,
+   			 참여자가분류한그룹수: exportData.participantInfo?.name ? Object.keys(JSON.parse(exportData.그룹별결과 || '{}')).length : 0,
+  			 그룹순서: exportData.그룹순서,
+ 			 가장많이사용하는혜택: exportData.가장많이사용하는혜택,
+  			 가장적게사용하는혜택: exportData.가장적게사용하는혜택,
+   			 참여자의견: exportData.참여자의견
+			};
+
+			const params = new URLSearchParams({
+    			    action: 'save',
+   			    data: JSON.stringify(minimalData),
+    		 	    callback: callbackName
+			});
+
+console.log('📤 전송 데이터:', JSON.stringify(minimalData));
+console.log('📏 전송 데이터 크기:', JSON.stringify(minimalData).length, 'bytes');
                     
                     const url = `${GOOGLE_APPS_SCRIPT_URL}?${params.toString()}`;
                     console.log('요청 URL 길이:', url.length);
