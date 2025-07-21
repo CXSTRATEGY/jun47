@@ -1673,10 +1673,7 @@
                     const dataString = JSON.stringify(exportData);
                     console.log('전송 데이터 크기:', dataString.length, 'bytes');
                     
-                    let params;
-                    if (dataString.length > 8000) {
-                        // 데이터가 너무 큰 경우 핵심 정보만 전송
-                        const minimalData = {
+                    const minimalData = {
    			 이름: exportData.이름,
    			 휴대폰뒷번호4자리: exportData.휴대폰뒷번호4자리,
    			 완료시간: exportData.완료시간,
