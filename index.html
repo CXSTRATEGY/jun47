@@ -3247,39 +3247,55 @@ console.log('📏 전송 데이터 크기:', JSON.stringify(minimalData).length,
         }
 
         async function submitFeedback() {
-            if (!appState.sortingData || !appState.surveyData) return;
-            
-            try {
-                const feedback = document.getElementById('participant-feedback').value.trim();
-                
-                appState.sortingData.isCompleted = true;
-                appState.sortingData.completedTime = new Date().toISOString();
-                appState.sortingData.duration = Math.floor((new Date() - appState.startTime) / 1000);
-                appState.sortingData.surveyData = appState.surveyData;
-                appState.sortingData.participantFeedback = feedback;
-                
-                delete appState.sortingData.tempSurveyData;
-                delete appState.sortingData.tempFeedback;
-                
-                saveToStorage(`participant_${appState.sortingData.participantId}`, appState.sortingData);
-                
-                try {
-    		     await saveToGoogleSheets(appState.sortingData, appState.currentProject);
-    		     showNotification('✅ 데이터가 성공적으로 제출되었습니다!', 'success');
-		} catch (error) {
-    		    console.warn('Google Sheets 응답 오류, 하지만 저장은 완료될 수 있습니다:', error);
-   	            // 실제로 데이터가 저장되고 있으므로 성공으로 처리
-    		showNotification('✅ 제출이 완료되었습니다!', 'success');
-		}
-
-		// 어떤 경우든 완료 페이지로 이동
-		showCompletionPage();
-                
-            } catch (error) {
-                console.error('제출 중 오류:', error);
-                showNotification('제출 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
-            }
+    if (!appState.sortingData || !appState.surveyData) return;
+    
+    // 버튼 찾기 및 비활성화
+    const submitButton = document.querySelector('button[onclick="submitFeedback()"]');
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = '제출 중...';
+        submitButton.style.opacity = '0.6';
+        submitButton.style.cursor = 'not-allowed';
+    }
+    
+    try {
+        const feedback = document.getElementById('participant-feedback').value.trim();
+        
+        appState.sortingData.isCompleted = true;
+        appState.sortingData.completedTime = new Date().toISOString();
+        appState.sortingData.duration = Math.floor((new Date() - appState.startTime) / 1000);
+        appState.sortingData.surveyData = appState.surveyData;
+        appState.sortingData.participantFeedback = feedback;
+        
+        delete appState.sortingData.tempSurveyData;
+        delete appState.sortingData.tempFeedback;
+        
+        saveToStorage(`participant_${appState.sortingData.participantId}`, appState.sortingData);
+        
+        try {
+            await saveToGoogleSheets(appState.sortingData, appState.currentProject);
+            showNotification('✅ 데이터가 성공적으로 제출되었습니다!', 'success');
+        } catch (error) {
+            console.warn('Google Sheets 응답 오류, 하지만 저장은 완료될 수 있습니다:', error);
+            showNotification('✅ 제출이 완료되었습니다!', 'success');
         }
+
+        // 어떤 경우든 완료 페이지로 이동
+        showCompletionPage();
+        
+    } catch (error) {
+        console.error('제출 중 오류:', error);
+        showNotification('제출 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
+        
+        // 오류 발생 시 버튼 다시 활성화
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = '최종 제출하기(3/3)';
+            submitButton.style.opacity = '1';
+            submitButton.style.cursor = 'pointer';
+        }
+    }
+}
 
         function showCompletionPage() {
             showPage('completion-page');
